@@ -1,3 +1,9 @@
+window.onload = function(){
+	document.ontouchstart = function(e){ 
+		e.preventDefault(); 
+	}
+};
+
 w = document.documentElement.clientWidth;
 h = document.documentElement.clientHeight;
 
