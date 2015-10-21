@@ -1,5 +1,5 @@
 window.onload = function(){
-	document.ontouchstart = function(e){ 
+	document.ontouchmove = function(e){ 
 		e.preventDefault(); 
 	}
 };
