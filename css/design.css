@@ -1,0 +1,8 @@
+* { /* Abstand & Rahmenbreite aller Objekte auf 0 */
+    margin:0;
+    padding:0;	
+}
+
+#myCanvas{
+	border:1px solid #FF0000;
+}
