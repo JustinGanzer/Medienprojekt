@@ -3,22 +3,32 @@ window.onload = function(){
 		e.preventDefault(); 
 	}
 	
-	var img = new Image();
-	img.src = "./pictures/spongi.png"
-	NJ.ctx.drawImage(img,NJ.WIDTH/4,NJ.HEIGHT/4);
+	gamma = 0;
+	
+	window.ondeviceorientation = function(event) {
+		gamma = Math.round(event.gamma);
+		updateSponge();
+	}
+	
+	start();
+
+};
+
+function updateSponge(){
+	if(gamma>=0)
+		spongeX+=5;
+	else
+		spongeX-=5;
+	NJ.ctx.clearRect(0,0,NJ.canvas.width,NJ.canvas.height);
+	NJ.ctx.drawImage(img,spongeX,NJ.HEIGHT/4);
 	
 };
 
-w = document.documentElement.clientWidth;
-h = document.documentElement.clientHeight;
-
-function drawCanvas(){
-	var c = document.getElementById("myCanvas");
-	c.width = w-1;
-	c.height = h-1;
-	var ctx = c.getContext("2d");
-	ctx.fillStyle="#000000";
-	ctx.fillRect(0,0,c.width,c.height);
+function start(){
+	
+	img = new Image();
+	img.src = "./pictures/spongi.png";
+	spongeX = NJ.WIDTH/4;
 }
 
 function toggleFullScreen() {
