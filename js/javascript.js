@@ -2,6 +2,11 @@ window.onload = function(){
 	document.ontouchmove = function(e){ 
 		e.preventDefault(); 
 	}
+	
+	var img = new Image();
+	img.src = "./pictures/spongi.png"
+	NJ.ctx.drawImage(img,NJ.WIDTH/4,NJ.HEIGHT/4);
+	
 };
 
 w = document.documentElement.clientWidth;

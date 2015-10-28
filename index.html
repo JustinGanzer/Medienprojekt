@@ -14,7 +14,7 @@
 		canvas { display: block; margin: 0 auto; background: #fff; }
 		</style>
 		
-		<script src="./js/javascript.js"></script>
+		
 	</head>
 	<body>
 		<header>
@@ -61,6 +61,8 @@
 			// we're ready to resize
 				NJ.resize();
 
+				
+				
 			},
 
 			resize: function() {
@@ -77,12 +79,7 @@
 				NJ.canvas.style.width = NJ.currentWidth + 'px';
 				NJ.canvas.style.height = NJ.currentHeight + 'px';
 
-			// we use a timeout here because some mobile
-			// browsers don't fire if there is not
-			// a short delay
-				window.setTimeout(function() {
-						window.scrollTo(0,1);
-				}, 1);
+			
 			}
 
 		};
@@ -95,11 +92,14 @@
 				toggleFullScreen();
 				});
 				*/
-				
+		
+		
+		
 			</script>
+			
 		</section>
 		<footer>
-			
+			<script src="./js/javascript.js"></script>
 		</footer>
 	</body>
 </html>
