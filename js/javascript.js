@@ -15,10 +15,7 @@ window.onload = function(){
 };
 
 function updateSponge(){
-	if(gamma>=0)
-		spongeX+=5;
-	else
-		spongeX-=5;
+	spongeX = spongeX + gamma;
 	NJ.ctx.clearRect(0,0,NJ.canvas.width,NJ.canvas.height);
 	NJ.ctx.drawImage(img,spongeX,NJ.HEIGHT/4);
 	
