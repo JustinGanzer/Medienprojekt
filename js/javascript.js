@@ -183,19 +183,21 @@ function start(){
 var MenuButton = function(x,y,src,func){
 	
 	this.img = new Image();
+	this.img.x1 = x;
+	this.img.y1 = y;
 	this.img.src = src;
 	this.x1 = x;
 	this.y1 = y;
 	this.x2 = x + this.img.width;
 	this.y2 = y + this.img.height;
-	this.img.x = this.x1;
-	this.img.y = this.y1;
+	
+	
 	
 	//console.log(this);
 	
 	this.img.onload = function(){
-		//console.log(this);
-		NJ.ctx.drawImage(this,this.x,this.y);
+		console.log(this);
+		NJ.ctx.drawImage(this,this.x1,this.y1);
 	}
 	
 	this.isHit = function(x,y){
