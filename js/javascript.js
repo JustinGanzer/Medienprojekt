@@ -49,11 +49,7 @@
 			update: function() {
 				
 				//PLAYERCHARAkTER
-<<<<<<< HEAD
-				gamma = tiltValue/6;
-=======
 				gamma = tiltValue/2;
->>>>>>> origin/master
 				updateSponge();
 				
 
@@ -169,7 +165,7 @@ function updateSponge(){
 	
 };
 
-<<<<<<< HEAD
+
 	/* Hier wird das PLAYER Object definiert */
 	Player = new Object();
 	Player.Scale = 0.4;
@@ -182,19 +178,6 @@ function updateSponge(){
 	}
 	
 	
-=======
-Player = new Object();
-Player.Scale = 0.4;
-Player.IMAGE = new Image();
-Player.IMAGE.src = "./pictures/spongi.png";
-
-Player.IMAGE.onload = function(){
-	Player.WIDTH = Player.IMAGE.width * Player.Scale;
-	console.log(Player.WIDTH);
-	Player.HEIGHT = Player.IMAGE.height * Player.Scale;
-}
-
->>>>>>> origin/master
 function start(){
 	spongeX = NJ.WIDTH/4;
 	
