@@ -217,7 +217,17 @@ function menu(){
 	var fs = new MenuButton(220,800,"./pictures/fullscreen.png",toggleFullScreen);
 	buttons.push(startB,hs,c,fs);
 	
-	
+	// listen for touches "touchstart"
+	window.addEventListener('click', function(e) {
+		e.preventDefault();
+		// event object has an array of multiple touches, we want the first only
+		//var touch = e.touches[0];
+		var touch = e;
+		//buttons.forEach(this.isHit(touch.pageX, touch.pageY));
+		buttons.forEach(function(entry) {
+			entry.isHit();
+		});
+}, false);
 	
 }
 
