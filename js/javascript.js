@@ -13,6 +13,11 @@ var NJ = {
 	canvas: null,
 	ctx:  null,
 	
+	scale:  1,
+    // the position of the canvas
+    // in relation to the screen
+    offset: {top: 0, left: 0},
+	
 	init: function() {
 
 		// the proportion of width to height
@@ -82,6 +87,10 @@ var NJ = {
 		// we're essentially scaling it with CSS
 		NJ.canvas.style.width = NJ.currentWidth + 'px';
 		NJ.canvas.style.height = NJ.currentHeight + 'px';
+		
+		NJ.scale = NJ.currentWidth / NJ.WIDTH;
+		NJ.offset.top = NJ.canvas.offsetTop;
+		NJ.offset.left = NJ.canvas.offsetLeft;
 
 			
 	}
@@ -188,21 +197,25 @@ var MenuButton = function(x,y,src,func){
 	this.img.src = src;
 	this.x1 = x;
 	this.y1 = y;
-	this.x2 = x + this.img.width;
-	this.y2 = y + this.img.height;
+	this.x2 = x + 200;
+	this.y2 = y + 100;
+	this.func = func;
 	
 	
 	
 	//console.log(this);
 	
 	this.img.onload = function(){
-		console.log(this);
 		NJ.ctx.drawImage(this,this.x1,this.y1);
 	}
 	
 	this.isHit = function(x,y){
-		if(x1 < x && x < x2 && y1 < y && y < y2)
+		x = (x - NJ.offset.left) / NJ.scale;
+		y = (y - NJ.offset.top) / NJ.scale;
+		if(this.x1 < x && x < this.x2 && this.y1 < y && y < this.y2){
+			console.log(x);
 			this.func();
+	}
 	}
 	
 }
@@ -217,18 +230,27 @@ function menu(){
 	var fs = new MenuButton(220,800,"./pictures/fullscreen.png",toggleFullScreen);
 	buttons.push(startB,hs,c,fs);
 	
-	// listen for touches "touchstart"
+	// MAUS OPTION:
+	/*
 	window.addEventListener('click', function(e) {
 		e.preventDefault();
-		// event object has an array of multiple touches, we want the first only
-		//var touch = e.touches[0];
+		
 		var touch = e;
-		//buttons.forEach(this.isHit(touch.pageX, touch.pageY));
 		buttons.forEach(function(entry) {
-			entry.isHit();
+			entry.isHit(touch.pageX, touch.pageY);
 		});
-}, false);
+	}
+	*/
 	
+	//TOUCH OPTION
+	window.addEventListener('touchstart', function(e) {
+		e.preventDefault();
+		
+		var touch = e.touches[0];
+		buttons.forEach(function(entry) {
+			entry.isHit(touch.pageX, touch.pageY);
+		}, false);
+	})
 }
 
 
