@@ -49,7 +49,11 @@
 			update: function() {
 				
 				//PLAYERCHARAkTER
+<<<<<<< HEAD
 				gamma = tiltValue/6;
+=======
+				gamma = tiltValue/2;
+>>>>>>> origin/master
 				updateSponge();
 				
 
@@ -146,14 +150,11 @@ window.onload = function(){
 	gamma = 0;
 	tiltValue = 0;
 	
-	window.addEventListener('deviceorientation', function (e) {tiltValue=e.gamma}, false);
+	window.addEventListener('deviceorientation', function (e) {
+		tiltValue=e.gamma;
+		}, false);
 	
-	/*
-	window.ondeviceorientation = function(event) {
-		gamma = Math.round(event.gamma);
-		updateSponge();
-	}
-	*/
+	
 	start();
 
 };
@@ -166,11 +167,9 @@ function updateSponge(){
 	if(spongeX<(Player.WIDTH/2*(-1)))
 		spongeX=NJ.WIDTH-Player.WIDTH/2;
 	
-	//NJ.ctx.clearRect(0,0,NJ.canvas.width,NJ.canvas.height);
-	//NJ.ctx.drawImage(img,spongeX,NJ.HEIGHT/4);
-	
 };
 
+<<<<<<< HEAD
 	/* Hier wird das PLAYER Object definiert */
 	Player = new Object();
 	Player.Scale = 0.4;
@@ -183,13 +182,26 @@ function updateSponge(){
 	}
 	
 	
+=======
+Player = new Object();
+Player.Scale = 0.4;
+Player.IMAGE = new Image();
+Player.IMAGE.src = "./pictures/spongi.png";
+
+Player.IMAGE.onload = function(){
+	Player.WIDTH = Player.IMAGE.width * Player.Scale;
+	console.log(Player.WIDTH);
+	Player.HEIGHT = Player.IMAGE.height * Player.Scale;
+}
+
+>>>>>>> origin/master
 function start(){
 	spongeX = NJ.WIDTH/4;
+	
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,NJ.HEIGHT/4, Player.HEIGHT, Player.WIDTH);
 	}
 	
-	// start the Noodle Loop
-				NJ.loop();
+	NJ.loop();
 	
 }
