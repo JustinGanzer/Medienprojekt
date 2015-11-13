@@ -180,7 +180,7 @@ Player.IMAGE.onload = function(){
 	
 function start(){
 	spongeX = NJ.WIDTH/4;
-	
+	menuOpen = false;
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,NJ.HEIGHT/4, Player.HEIGHT, Player.WIDTH);
 	}
@@ -212,7 +212,7 @@ var MenuButton = function(x,y,src,func){
 	this.isHit = function(x,y){
 		x = (x - NJ.offset.left) / NJ.scale;
 		y = (y - NJ.offset.top) / NJ.scale;
-		if(this.x1 < x && x < this.x2 && this.y1 < y && y < this.y2){
+		if(menuOpen && this.x1 < x && x < this.x2 && this.y1 < y && y < this.y2){
 			console.log(x);
 			this.func();
 	}
@@ -222,11 +222,16 @@ var MenuButton = function(x,y,src,func){
 
 
 function menu(){
+	//menuOpen controls if the menu is open or not (so the MenuButtons can hit once)
+	menuOpen = true;
 	var buttons = [];
-	var placeholder = function(){return true};
-	var startB = new MenuButton(220,300,"./pictures/start.png",start);
-	var hs = new MenuButton(220,450,"./pictures/highscore.png",placeholder);
-	var c = new MenuButton(220,600,"./pictures/charakter.png",placeholder);
+	var placeholder = function(){
+		alert("test");
+		return true;
+	};
+	var startB = new MenuButton(220,100,"./pictures/start.png",start);
+	var hs = new MenuButton(220,250,"./pictures/highscore.png",placeholder);
+	var c = new MenuButton(220,400,"./pictures/charakter.png",placeholder);
 	var fs = new MenuButton(220,800,"./pictures/fullscreen.png",toggleFullScreen);
 	buttons.push(startB,hs,c,fs);
 	
