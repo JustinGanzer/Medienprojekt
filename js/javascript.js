@@ -154,8 +154,8 @@ window.onload = function(){
 	}, false);
 	
 	
-	//start();
-	menu();
+	start();
+	//menu();
 
 };
 
@@ -164,14 +164,21 @@ function updateSponge(){
 	
 	var jumpHeight = 15;
 	
+	var temp = spongeUpNr/340;
+	
+	
+	
+	if(temp<0.1)
+		temp=0.1;
+	temp=temp*2;
 	if(spongeUpBool){
-		spongeY = spongeY + jumpHeight;
-		spongeUpNr = spongeUpNr + jumpHeight;
+		spongeY = spongeY + jumpHeight*temp;
+		spongeUpNr = spongeUpNr + jumpHeight*temp;
 		if(spongeUpNr > 340)
 			spongeUpBool = false;
 	}else{
-		spongeY = spongeY - jumpHeight;
-		spongeUpNr = spongeUpNr - jumpHeight;
+		spongeY = spongeY - jumpHeight*temp;
+		spongeUpNr = spongeUpNr - jumpHeight*temp;
 		if(spongeUpNr < 0)
 			spongeUpBool = true;
 	}
