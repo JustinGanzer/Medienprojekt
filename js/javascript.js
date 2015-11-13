@@ -35,7 +35,11 @@ var NJ = {
 		// the canvas context enables us to 
 		// interact with the canvas api
 		NJ.ctx = NJ.canvas.getContext('2d');
-			
+		
+		spongeY = 874;
+		spongeUpBool = true;
+		spongeUpNr = 0;
+		
 
 		// we're ready to resize
 		NJ.resize();
@@ -61,7 +65,7 @@ var NJ = {
 
 			
 	   NJ.Draw.clear(); 
-	   NJ.ctx.drawImage(Player.IMAGE,spongeX,NJ.HEIGHT/4, Player.HEIGHT, Player.WIDTH);
+	   NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY*NJ.scale, Player.HEIGHT, Player.WIDTH);
 	},
 
 	// the actual loop
@@ -158,6 +162,20 @@ window.onload = function(){
 function updateSponge(){
 	spongeX = spongeX + gamma;
 	
+	var jumpHeight = 15;
+	
+	if(spongeUpBool){
+		spongeY = spongeY + jumpHeight;
+		spongeUpNr = spongeUpNr + jumpHeight;
+		if(spongeUpNr > 340)
+			spongeUpBool = false;
+	}else{
+		spongeY = spongeY - jumpHeight;
+		spongeUpNr = spongeUpNr - jumpHeight;
+		if(spongeUpNr < 0)
+			spongeUpBool = true;
+	}
+	
 	if(spongeX+Player.WIDTH/2>NJ.WIDTH)
 		spongeX=Player.WIDTH/2*(-1);
 	if(spongeX<(Player.WIDTH/2*(-1)))
@@ -226,7 +244,7 @@ function menu(){
 	menuOpen = true;
 	var buttons = [];
 	var placeholder = function(){
-		alert("test");
+		alert("Button clicked");
 		return true;
 	};
 	var startB = new MenuButton(220,100,"./pictures/start.png",start);
@@ -255,7 +273,7 @@ function menu(){
 		buttons.forEach(function(entry) {
 			entry.isHit(touch.pageX, touch.pageY);
 		}, false);
-	})
+	});
 }
 
 
