@@ -154,8 +154,8 @@ window.onload = function(){
 	}, false);
 	
 	
-	start();
-	//menu();
+	//start();
+	menu();
 
 };
 
