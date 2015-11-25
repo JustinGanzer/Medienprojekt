@@ -281,7 +281,6 @@ var Menu = function(){
 		if(!menuOpen)
 				return;
 		e.preventDefault();
-		
 		var touch = e.touches[0];
 		buttons.forEach(function(entry) {
 			
