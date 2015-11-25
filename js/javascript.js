@@ -213,7 +213,7 @@ var MenuButton = function(x,y,src,func){
 	
 	
 	this.img.onload = function(){
-		return
+		return;
 	}
 	
 	this.draw = function(img){
@@ -291,6 +291,7 @@ var Menu = function(){
 };
 
 
+var menu = new Menu();
 
 window.onload = function(){
 	
@@ -307,7 +308,6 @@ window.onload = function(){
 	
 	
 	//start();
-	var menu = new Menu();
 	currentScreen.draw();
 
 };
