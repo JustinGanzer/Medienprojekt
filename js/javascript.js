@@ -111,8 +111,8 @@ NJ.Draw = {
 		//NJ.ctx.clearRect(0,0,NJ.canvas.width,NJ.canvas.height);
 	},
 
-	rect: function(x, y, w, h, col) {
-		NJ.ctx.fillStyle = col;
+	rect: function(x, y, w, h, color) {
+		NJ.ctx.fillStyle = color;
 		NJ.ctx.fillRect(x, y, w, h);
 	},
 
@@ -140,24 +140,7 @@ window.addEventListener('resize', NJ.resize, false);
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 
-window.onload = function(){
-	
-	document.ontouchmove = function(e){ 
-		e.preventDefault(); 
-	}
-	
-	gamma = 0;
-	tiltValue = 0;
-	
-	window.addEventListener('deviceorientation', function (e) {
-		tiltValue=e.gamma;
-	}, false);
-	
-	
-	//start();
-	menu();
 
-};
 
 function updateSponge(){
 	spongeX = spongeX + gamma;
@@ -226,18 +209,22 @@ var MenuButton = function(x,y,src,func){
 	this.y2 = y + 100;
 	this.func = func;
 	
+	var img = this.img;
 	
-	
-	//console.log(this);
 	
 	this.img.onload = function(){
-		NJ.ctx.drawImage(this,this.x1,this.y1);
+		return
 	}
+	
+	this.draw = function(img){
+		NJ.ctx.drawImage(this.img,this.img.x1,this.img.y1);
+	}
+	
 	
 	this.isHit = function(x,y){
 		x = (x - NJ.offset.left) / NJ.scale;
 		y = (y - NJ.offset.top) / NJ.scale;
-		if(menuOpen && this.x1 < x && x < this.x2 && this.y1 < y && y < this.y2){
+		if(this.x1 < x && x < this.x2 && this.y1 < y && y < this.y2){
 			console.log(x);
 			this.func();
 	}
@@ -245,10 +232,10 @@ var MenuButton = function(x,y,src,func){
 	
 }
 
+var currentScreen = null;
 
-function menu(){
-	//menuOpen controls if the menu is open or not (so the MenuButtons can hit once)
-	menuOpen = true;
+var Menu = function(){
+	currentScreen = this;
 	var buttons = [];
 	var placeholder = function(){
 		alert("Button clicked");
@@ -259,6 +246,22 @@ function menu(){
 	var c = new MenuButton(220,400,"./pictures/charakter.png",placeholder);
 	var fs = new MenuButton(220,800,"./pictures/fullscreen.png",toggleFullScreen);
 	buttons.push(startB,hs,c,fs);
+	
+	this.draw = function(){
+		buttons.forEach(function(entry){
+			entry.draw();
+		});
+	};
+	
+	this.touchFunc = function(e){
+		e.preventDefault();
+		
+		var touch = e.touches[0];
+		buttons.forEach(function(entry) {
+			
+			entry.isHit(touch.pageX, touch.pageY);
+		}, false);
+	}
 	
 	// MAUS OPTION:
 	/*
@@ -273,15 +276,48 @@ function menu(){
 	*/
 	
 	//TOUCH OPTION
+	/*
 	window.addEventListener('touchstart', function(e) {
+		if(!menuOpen)
+				return;
 		e.preventDefault();
 		
 		var touch = e.touches[0];
 		buttons.forEach(function(entry) {
+			
 			entry.isHit(touch.pageX, touch.pageY);
 		}, false);
 	});
-}
+	*/
+};
 
 
+
+window.onload = function(){
+	
+	document.ontouchmove = function(e){ 
+		e.preventDefault(); 
+	}
+	
+	gamma = 0;
+	tiltValue = 0;
+	
+	window.addEventListener('deviceorientation', function (e) {
+		tiltValue=e.gamma;
+	}, false);
+	
+	
+	//start();
+	var menu = new Menu();
+	currentScreen.draw();
+
+};
+
+window.addEventListener('touchstart', function(e) {
+		currentScreen.touchFunc(e),false
+});
+
+window.addEventListener('click', function(e) {
+		currentScreen.touchFunc(e),false
+});
 
