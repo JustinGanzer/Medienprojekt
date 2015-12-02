@@ -36,10 +36,6 @@ var NJ = {
 		// interact with the canvas api
 		NJ.ctx = NJ.canvas.getContext('2d');
 		
-		spongeY = 874;
-		spongeUpBool = true;
-		spongeUpNr = 0;
-		
 
 		// we're ready to resize
 		NJ.resize();
@@ -148,10 +144,11 @@ function updateSponge(){
 	
 	var jumpHeight = 15;
 	
+	/*
 	var temp = spongeUpNr/340;
 	
 	
-	
+	//Y
 	if(temp<0.1)
 		temp=0.1;
 	temp=temp*2;
@@ -166,7 +163,28 @@ function updateSponge(){
 		if(spongeUpNr < 0)
 			spongeUpBool = true;
 	}
+	*/
+
+	var temp;
+	if(spongeUpNr > 170)
+		temp = 0.5;
+	else
+		temp = 0.75;
+
+	if(spongeUpBool){
+		spongeY = spongeY + jumpHeight*temp;
+		spongeUpNr = spongeUpNr + jumpHeight*temp;
+		if(spongeUpNr > 340)
+			spongeUpBool = false;
+	}else{
+		spongeY = spongeY - jumpHeight*temp;
+		spongeUpNr = spongeUpNr - jumpHeight*temp;
+		if(spongeUpNr < 0)
+			spongeUpBool = true;
+	}
+
 	
+	//X
 	if(spongeX+Player.WIDTH/2>NJ.WIDTH)
 		spongeX=Player.WIDTH/2*(-1);
 	if(spongeX<(Player.WIDTH/2*(-1)))
@@ -189,9 +207,11 @@ Player.IMAGE.onload = function(){
 	
 function start(){
 	spongeX = NJ.WIDTH/4;
-	menuOpen = false;
+	spongeY = 874;
+	spongeUpBool = true;
+	spongeUpNr = 0;
 	Player.IMAGE.onload = function(){
-		NJ.ctx.drawImage(Player.IMAGE,spongeX,NJ.HEIGHT/4, Player.HEIGHT, Player.WIDTH);
+		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
 	
 	NJ.loop();
