@@ -76,6 +76,7 @@ var NJ = {
 		requestAnimFrame( NJ.loop );
 		NJ.update();
 		NJ.render();
+		
 	},
 
 	resize: function() {
@@ -135,7 +136,7 @@ NJ.Draw = {
 window.addEventListener('load', NJ.init, false);
 window.addEventListener('resize', NJ.resize, false);
 
-		
+var currentScreen = null;	
 		
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
@@ -232,7 +233,7 @@ var MenuButton = function(x,y,src,func){
 	
 }
 
-var currentScreen = null;
+
 
 var Menu = function(){
 	currentScreen = this;
@@ -254,7 +255,6 @@ var Menu = function(){
 	};
 	
 	this.touchFunc = function(e){
-		e.preventDefault();
 		
 		var touch = e.touches[0];
 		buttons.forEach(function(entry) {
@@ -262,32 +262,6 @@ var Menu = function(){
 			entry.isHit(touch.pageX, touch.pageY);
 		}, false);
 	}
-	
-	// MAUS OPTION:
-	/*
-	window.addEventListener('click', function(e) {
-		e.preventDefault();
-		
-		var touch = e;
-		buttons.forEach(function(entry) {
-			entry.isHit(touch.pageX, touch.pageY);
-		});
-	}
-	*/
-	
-	//TOUCH OPTION
-	/*
-	window.addEventListener('touchstart', function(e) {
-		if(!menuOpen)
-				return;
-		e.preventDefault();
-		var touch = e.touches[0];
-		buttons.forEach(function(entry) {
-			
-			entry.isHit(touch.pageX, touch.pageY);
-		}, false);
-	});
-	*/
 };
 
 
@@ -313,10 +287,8 @@ window.onload = function(){
 };
 
 window.addEventListener('touchstart', function(e) {
-		currentScreen.touchFunc(e),false
+	e.preventDefault();
+	currentScreen.touchFunc(e);
 });
 
-window.addEventListener('click', function(e) {
-		currentScreen.touchFunc(e),false
-});
 
