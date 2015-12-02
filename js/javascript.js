@@ -13,6 +13,11 @@ var NJ = {
 	canvas: null,
 	ctx:  null,
 	
+	scale:  1,
+    // the position of the canvas
+    // in relation to the screen
+    offset: {top: 0, left: 0},
+	
 	init: function() {
 
 		// the proportion of width to height
@@ -30,7 +35,11 @@ var NJ = {
 		// the canvas context enables us to 
 		// interact with the canvas api
 		NJ.ctx = NJ.canvas.getContext('2d');
-			
+		
+		spongeY = 874;
+		spongeUpBool = true;
+		spongeUpNr = 0;
+		
 
 		// we're ready to resize
 		NJ.resize();
@@ -56,7 +65,7 @@ var NJ = {
 
 			
 	   NJ.Draw.clear(); 
-	   NJ.ctx.drawImage(Player.IMAGE,spongeX,NJ.HEIGHT/4, Player.HEIGHT, Player.WIDTH);
+	   NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY*NJ.scale, Player.HEIGHT, Player.WIDTH);
 	},
 
 	// the actual loop
@@ -82,6 +91,10 @@ var NJ = {
 		// we're essentially scaling it with CSS
 		NJ.canvas.style.width = NJ.currentWidth + 'px';
 		NJ.canvas.style.height = NJ.currentHeight + 'px';
+		
+		NJ.scale = NJ.currentWidth / NJ.WIDTH;
+		NJ.offset.top = NJ.canvas.offsetTop;
+		NJ.offset.left = NJ.canvas.offsetLeft;
 
 			
 	}
@@ -98,8 +111,8 @@ NJ.Draw = {
 		//NJ.ctx.clearRect(0,0,NJ.canvas.width,NJ.canvas.height);
 	},
 
-	rect: function(x, y, w, h, col) {
-		NJ.ctx.fillStyle = col;
+	rect: function(x, y, w, h, color) {
+		NJ.ctx.fillStyle = color;
 		NJ.ctx.fillRect(x, y, w, h);
 	},
 
@@ -127,27 +140,31 @@ window.addEventListener('resize', NJ.resize, false);
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 
-window.onload = function(){
-	
-	document.ontouchmove = function(e){ 
-		e.preventDefault(); 
-	}
-	
-	gamma = 0;
-	tiltValue = 0;
-	
-	window.addEventListener('deviceorientation', function (e) {
-		tiltValue=e.gamma;
-	}, false);
-	
-	
-	//start();
-	menu();
 
-};
 
 function updateSponge(){
 	spongeX = spongeX + gamma;
+	
+	var jumpHeight = 15;
+	
+	var temp = spongeUpNr/340;
+	
+	
+	
+	if(temp<0.1)
+		temp=0.1;
+	temp=temp*2;
+	if(spongeUpBool){
+		spongeY = spongeY + jumpHeight*temp;
+		spongeUpNr = spongeUpNr + jumpHeight*temp;
+		if(spongeUpNr > 340)
+			spongeUpBool = false;
+	}else{
+		spongeY = spongeY - jumpHeight*temp;
+		spongeUpNr = spongeUpNr - jumpHeight*temp;
+		if(spongeUpNr < 0)
+			spongeUpBool = true;
+	}
 	
 	if(spongeX+Player.WIDTH/2>NJ.WIDTH)
 		spongeX=Player.WIDTH/2*(-1);
@@ -171,7 +188,7 @@ Player.IMAGE.onload = function(){
 	
 function start(){
 	spongeX = NJ.WIDTH/4;
-	
+	menuOpen = false;
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,NJ.HEIGHT/4, Player.HEIGHT, Player.WIDTH);
 	}
@@ -188,48 +205,118 @@ var MenuButton = function(x,y,src,func){
 	this.img.src = src;
 	this.x1 = x;
 	this.y1 = y;
-	this.x2 = x + this.img.width;
-	this.y2 = y + this.img.height;
+	this.x2 = x + 200;
+	this.y2 = y + 100;
+	this.func = func;
 	
+	var img = this.img;
 	
-	
-	//console.log(this);
 	
 	this.img.onload = function(){
-		console.log(this);
-		NJ.ctx.drawImage(this,this.x1,this.y1);
+		return;
 	}
 	
+	this.draw = function(img){
+		NJ.ctx.drawImage(this.img,this.img.x1,this.img.y1);
+	}
+	
+	
 	this.isHit = function(x,y){
-		if(x1 < x && x < x2 && y1 < y && y < y2)
+		x = (x - NJ.offset.left) / NJ.scale;
+		y = (y - NJ.offset.top) / NJ.scale;
+		if(this.x1 < x && x < this.x2 && this.y1 < y && y < this.y2){
+			console.log(x);
 			this.func();
+	}
 	}
 	
 }
 
+var currentScreen = null;
 
-function menu(){
+var Menu = function(){
+	currentScreen = this;
 	var buttons = [];
-	var placeholder = function(){return true};
-	var startB = new MenuButton(220,300,"./pictures/start.png",start);
-	var hs = new MenuButton(220,450,"./pictures/highscore.png",placeholder);
-	var c = new MenuButton(220,600,"./pictures/charakter.png",placeholder);
+	var placeholder = function(){
+		alert("Button clicked");
+		return true;
+	};
+	var startB = new MenuButton(220,100,"./pictures/start.png",start);
+	var hs = new MenuButton(220,250,"./pictures/highscore.png",placeholder);
+	var c = new MenuButton(220,400,"./pictures/charakter.png",placeholder);
 	var fs = new MenuButton(220,800,"./pictures/fullscreen.png",toggleFullScreen);
 	buttons.push(startB,hs,c,fs);
 	
-	// listen for touches "touchstart"
+	this.draw = function(){
+		buttons.forEach(function(entry){
+			entry.draw();
+		});
+	};
+	
+	this.touchFunc = function(e){
+		e.preventDefault();
+		
+		var touch = e.touches[0];
+		buttons.forEach(function(entry) {
+			
+			entry.isHit(touch.pageX, touch.pageY);
+		}, false);
+	}
+	
+	// MAUS OPTION:
+	/*
 	window.addEventListener('click', function(e) {
 		e.preventDefault();
-		// event object has an array of multiple touches, we want the first only
-		//var touch = e.touches[0];
+		
 		var touch = e;
-		//buttons.forEach(this.isHit(touch.pageX, touch.pageY));
 		buttons.forEach(function(entry) {
-			entry.isHit();
+			entry.isHit(touch.pageX, touch.pageY);
 		});
-}, false);
+	}
+	*/
 	
-}
+	//TOUCH OPTION
+	/*
+	window.addEventListener('touchstart', function(e) {
+		if(!menuOpen)
+				return;
+		e.preventDefault();
+		var touch = e.touches[0];
+		buttons.forEach(function(entry) {
+			
+			entry.isHit(touch.pageX, touch.pageY);
+		}, false);
+	});
+	*/
+};
 
 
+var menu = new Menu();
+
+window.onload = function(){
+	
+	document.ontouchmove = function(e){ 
+		e.preventDefault(); 
+	}
+	
+	gamma = 0;
+	tiltValue = 0;
+	
+	window.addEventListener('deviceorientation', function (e) {
+		tiltValue=e.gamma;
+	}, false);
+	
+	
+	//start();
+	currentScreen.draw();
+
+};
+
+window.addEventListener('touchstart', function(e) {
+		currentScreen.touchFunc(e),false
+});
+
+window.addEventListener('click', function(e) {
+		currentScreen.touchFunc(e),false
+});
 
