@@ -73,8 +73,9 @@ var NJ = {
 		NJ.render();
 		requestAnimFrame( NJ.loop );
 
-		if(spongeY > 960){
-			alert("Hello you are dead!");
+		if(spongeY > NJ.HEIGHT){
+			//alert("Hello you are dead!");
+			console.log(spongeY);
 			stop();
 		}
 	},
@@ -155,7 +156,7 @@ function updateSponge(){
 	
 	var jumpHeight = 15;
 	
-	/*
+	
 	var temp = spongeUpNr/340;
 	
 	
@@ -174,25 +175,7 @@ function updateSponge(){
 		if(spongeUpNr < 0)
 			spongeUpBool = true;
 	}
-	*/
-
-	var temp;
-	if(spongeUpNr > 170)
-		temp = 0.5;
-	else
-		temp = 0.75;
-
-	if(spongeUpBool){
-		spongeY = spongeY + jumpHeight*temp;
-		spongeUpNr = spongeUpNr + jumpHeight*temp;
-		if(spongeUpNr > 340)
-			spongeUpBool = false;
-	}else{
-		spongeY = spongeY - jumpHeight*temp;
-		spongeUpNr = spongeUpNr - jumpHeight*temp;
-		if(spongeUpNr < 0)
-			spongeUpBool = true;
-	}
+	
 
 	
 	//X
