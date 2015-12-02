@@ -69,10 +69,14 @@ var NJ = {
 	// then proceeds to update
 	// and render
 	loop: function() {
-		requestAnimFrame( NJ.loop );
 		NJ.update();
 		NJ.render();
-		
+		requestAnimFrame( NJ.loop );
+
+		if(spongeY > 960){
+			alert("Hello you are dead!");
+			stop();
+		}
 	},
 
 	resize: function() {
@@ -199,6 +203,7 @@ function updateSponge(){
 	
 };
 
+var requestId;
 
 /* Hier wird das PLAYER Object definiert */
 Player = new Object();
@@ -220,9 +225,16 @@ function start(){
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
-	
-	NJ.loop();
-	
+	if(!requestId){
+		NJ.loop();
+	}
+}
+
+function stop(){
+	if(requestId){
+		window.cancelAnimationFrame(requestId);
+		requestId = undefined;
+	}
 }
 
 var MenuButton = function(x,y,src,func){
