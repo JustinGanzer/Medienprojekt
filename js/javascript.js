@@ -74,10 +74,15 @@ var NJ = {
 	// then proceeds to update
 	// and render
 	loop: function() {
-		requestAnimFrame( NJ.loop );
 		NJ.update();
 		NJ.render();
-		
+		requestAnimFrame( NJ.loop );
+
+		if(spongeY > NJ.HEIGHT){
+			//alert("Hello you are dead!");
+			console.log(spongeY);
+			stop();
+		}
 	},
 
 	resize: function() {
@@ -147,7 +152,7 @@ function updateSponge(){
 	
 	var jumpHeight = 15;
 	
-	/*
+	
 	var temp = spongeUpNr/340;
 	
 	
@@ -166,25 +171,7 @@ function updateSponge(){
 		if(spongeUpNr < 0)
 			spongeUpBool = true;
 	}
-	*/
-
-	var temp;
-	if(spongeUpNr > 170)
-		temp = 0.5;
-	else
-		temp = 0.75;
-
-	if(spongeUpBool){
-		spongeY = spongeY + jumpHeight*temp;
-		spongeUpNr = spongeUpNr + jumpHeight*temp;
-		if(spongeUpNr > 340)
-			spongeUpBool = false;
-	}else{
-		spongeY = spongeY - jumpHeight*temp;
-		spongeUpNr = spongeUpNr - jumpHeight*temp;
-		if(spongeUpNr < 0)
-			spongeUpBool = true;
-	}
+	
 
 	
 	//X
@@ -195,6 +182,7 @@ function updateSponge(){
 	
 };
 
+var requestId;
 
 /* Hier wird das PLAYER Object definiert */
 Player = new Object();
@@ -255,12 +243,25 @@ function start(){
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
+<<<<<<< HEAD
 	
 	
 	var tempPlatform = new Platform(300, 300); 
 	NJ.entities.push(tempPlatform)
 	NJ.loop();
 	
+=======
+	if(!requestId){
+		NJ.loop();
+	}
+}
+
+function stop(){
+	if(requestId){
+		window.cancelAnimationFrame(requestId);
+		requestId = undefined;
+	}
+>>>>>>> origin/master
 }
 
 var MenuButton = function(x,y,src,func){
