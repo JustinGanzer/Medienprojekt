@@ -60,7 +60,12 @@ var NJ = {
 	render: function() {
 
 			
-	   NJ.Draw.clear(); 
+	   NJ.Draw.clear();
+	   
+	   NJ.entities.forEach(function(entry){
+			entry.draw();
+		});
+		
 	   NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY*NJ.scale, Player.HEIGHT, Player.WIDTH);
 	},
 
@@ -137,15 +142,6 @@ var currentScreen = null;
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 
-function updateEntities(){
-	
-	NJ.entities.forEach(function(entry){
-			entry.draw();
-		});
-	
-}
-
-
 function updateSponge(){
 	spongeX = spongeX + gamma;
 	
@@ -210,7 +206,46 @@ Player.IMAGE.onload = function(){
 	Player.WIDTH = Player.IMAGE.width * Player.Scale;
 	Player.HEIGHT = Player.IMAGE.height * Player.Scale;
 }
+
+function Platform(x,y){
+	this.img = new Image();
+	//100px
+	this.xOffset = 100;
+	this.x = x;
+	//25px
+	this.y = y;
+	this.img.x = x;
+	this.img.y = y;
+	this.img.src = "./pictures/Platform.png";
 	
+	var img = this.img;
+	
+	this.img.onload = function(){
+		return;
+	}
+	
+	this.draw = function(img){
+		NJ.ctx.drawImage(this.img,this.img.x,this.img.y);
+	}
+	
+	
+	this.isHit = function(){
+		if(spongeX >= this.x && spongeX <= this.x + 100 && spongeY == this.y){
+			spongeUpNr = 0;
+			spongeUpBool = true;
+			var index = NJ.entities.indexOf(this);
+			NJ.entities.splice(index, 1);
+	}
+	}
+}	
+
+function updatePlatforms(){
+	
+	NJ.entities.forEach(function(entry){
+			entry.isHit();
+		});
+	
+}
 	
 function start(){
 	spongeX = NJ.WIDTH/4;
@@ -221,6 +256,9 @@ function start(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
 	
+	
+	var tempPlatform = new Platform(300, 300); 
+	NJ.entities.push(tempPlatform)
 	NJ.loop();
 	
 }
