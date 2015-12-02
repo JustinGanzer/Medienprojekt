@@ -71,10 +71,12 @@ var NJ = {
 	loop: function() {
 		NJ.update();
 		NJ.render();
-		requestAnimFrame( NJ.loop );
+		
+		requestId = requestAnimFrame( NJ.loop );
 
-		if(spongeY > 960){
-			alert("Hello you are dead!");
+		if(spongeY > 1200){
+			console.log(spongeY);
+			console.log(requestId);
 			stop();
 		}
 	},
@@ -320,8 +322,8 @@ window.onload = function(){
 	}, false);
 	
 	
-	//start();
-	currentScreen.draw();
+	start();
+	//currentScreen.draw();
 
 };
 
