@@ -12,6 +12,7 @@ window.requestAnimFrame = (function(){
 })();
 
 function toggleFullScreen() {
+
   var doc = window.document;
   var docEl = doc.documentElement;
 
