@@ -69,7 +69,7 @@ var NJ = {
 			entry.draw();
 		});
 		
-	   NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY*NJ.scale, Player.HEIGHT, Player.WIDTH);
+	   NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	},
 
 	// the actual loop
@@ -82,7 +82,7 @@ var NJ = {
 		
 		requestId = requestAnimFrame( NJ.loop );
 
-		if(spongeY > NJ.HEIGHT){
+		if(spongeY > 1200){
 
 			console.log(spongeY);
 			console.log(requestId);
@@ -144,6 +144,35 @@ NJ.Draw = {
 
 };
 
+var SOUND = {
+	
+	platformsound : new Audio('./sounds/sound1.mp3'),
+	tempsounds : 0,
+	
+	//THIS DARN FUNCTION is NEEDED, because I love it.. not really, but a user input triggered
+	//sound.play() method has to be called, otherwise it will be blocked.
+	initAudio : function(){
+    var self = this;
+    self.audio = SOUND.platformsound;
+    var startAudio = function(){
+                         self.audio.play();
+                         document.removeEventListener("touchstart", self.startAudio, false);
+                     }
+    self.startAudio = startAudio;
+
+    var pauseAudio = function(){
+                         self.audio.pause();
+                         self.audio.removeEventListener("play", self.pauseAudio, false);
+                     }
+    self.pauseAudio = pauseAudio;
+
+    document.addEventListener("touchstart", self.startAudio, false);
+    self.audio.addEventListener("play", self.pauseAudio, false);
+}
+	
+}
+
+
 window.addEventListener('load', NJ.init, false);
 window.addEventListener('resize', NJ.resize, false);
 
@@ -159,7 +188,6 @@ function updateSponge(){
 	
 	
 	var temp = spongeUpNr/340;
-	
 	
 	//Y
 	if(temp<0.1)
@@ -202,34 +230,32 @@ Player.IMAGE.onload = function(){
 
 function Platform(x,y){
 	this.img = new Image();
-	//100px
 	this.xOffset = 100;
 	this.x = x;
-	//25px
 	this.y = y;
 	this.img.x = x;
 	this.img.y = y;
 	this.img.src = "./pictures/Platform.png";
 	
 	var img = this.img;
-	
 	this.img.onload = function(){
 		return;
 	}
 	
-	this.draw = function(img){
-		console.log(img.x);
-		NJ.ctx.drawImage(img,img.x,img.y);
+	this.draw = function(){
+		NJ.ctx.drawImage(img,x,y);
 	}
 	
-	
 	this.isHit = function(){
-		if(spongeX >= this.x && spongeX <= this.x + this.xOffset && spongeY == this.y){
-			spongeUpNr = 0;
+		if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
+			if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+15){
+			SOUND.platformsound.play();
+			spongeUpNr = 345;
 			spongeUpBool = true;
 			var index = NJ.entities.indexOf(this);
 			NJ.entities.splice(index, 1);
-	}
+			}
+		}
 	}
 }	
 
@@ -243,15 +269,17 @@ function updatePlatforms(){
 	
 function start(){
 	spongeX = NJ.WIDTH/4;
-	spongeY = 874;
+	spongeY = 500;
 	spongeUpBool = true;
 	spongeUpNr = 0;
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
 	
-	var tempPlatform = new Platform(600, 600); 
-	NJ.entities.push(tempPlatform)
+	var tempPlatform = new Platform(150, 750);
+	var tempPlatform2 = new Platform(300, 750);
+	var tempPlatform3 = new Platform(225, 450);
+	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3)
 	
 	NJ.loop();
 }
@@ -345,9 +373,10 @@ window.onload = function(){
 		tiltValue=e.gamma;
 	}, false);
 	
+	SOUND.initAudio();
 	
-	start();
-	//currentScreen.draw();
+	//start();
+	currentScreen.draw();
 
 };
 
