@@ -79,9 +79,12 @@ var NJ = {
 	loop: function() {
 		NJ.update();
 		NJ.render();
-		requestAnimFrame( NJ.loop );
+		
+		requestId = requestAnimFrame( NJ.loop );
 
 		if(spongeY > NJ.HEIGHT){
+			console.log(spongeY);
+			console.log(requestId);
 			stop();
 		}
 	},
@@ -248,10 +251,8 @@ function start(){
 	
 	var tempPlatform = new Platform(600, 600); 
 	NJ.entities.push(tempPlatform)
-
-	if(!requestId){
-		NJ.loop();
-	}
+	
+	NJ.loop();
 }
 
 function stop(){
@@ -344,8 +345,8 @@ window.onload = function(){
 	}, false);
 	
 	
-	//start();
-	currentScreen.draw();
+	start();
+	//currentScreen.draw();
 
 };
 
