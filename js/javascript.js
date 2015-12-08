@@ -78,8 +78,7 @@ var NJ = {
 		NJ.render();
 		
 		requestId = requestAnimFrame( NJ.loop );
-
--
+		
 		if(spongeY > 1200){
 			console.log(spongeY);
 			console.log(requestId);
