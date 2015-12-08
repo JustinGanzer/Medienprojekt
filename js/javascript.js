@@ -52,6 +52,9 @@ var NJ = {
 		//PLAYERCHARAkTER
 		gamma = tiltValue/2;
 		updateSponge();
+		NJ.entities.forEach(function(entry){
+			entry.isHit();
+		});
 				
 
 	},
@@ -79,8 +82,6 @@ var NJ = {
 		requestAnimFrame( NJ.loop );
 
 		if(spongeY > NJ.HEIGHT){
-			//alert("Hello you are dead!");
-			console.log(spongeY);
 			stop();
 		}
 	},
@@ -213,12 +214,13 @@ function Platform(x,y){
 	}
 	
 	this.draw = function(img){
-		NJ.ctx.drawImage(this.img,this.img.x,this.img.y);
+		console.log(img.x);
+		NJ.ctx.drawImage(img,img.x,img.y);
 	}
 	
 	
 	this.isHit = function(){
-		if(spongeX >= this.x && spongeX <= this.x + 100 && spongeY == this.y){
+		if(spongeX >= this.x && spongeX <= this.x + this.xOffset && spongeY == this.y){
 			spongeUpNr = 0;
 			spongeUpBool = true;
 			var index = NJ.entities.indexOf(this);
@@ -243,14 +245,10 @@ function start(){
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
-<<<<<<< HEAD
 	
-	
-	var tempPlatform = new Platform(300, 300); 
+	var tempPlatform = new Platform(600, 600); 
 	NJ.entities.push(tempPlatform)
-	NJ.loop();
-	
-=======
+
 	if(!requestId){
 		NJ.loop();
 	}
@@ -261,7 +259,6 @@ function stop(){
 		window.cancelAnimationFrame(requestId);
 		requestId = undefined;
 	}
->>>>>>> origin/master
 }
 
 var MenuButton = function(x,y,src,func){
@@ -356,5 +353,12 @@ window.addEventListener('touchstart', function(e) {
 	e.preventDefault();
 	currentScreen.touchFunc(e);
 });
+
+window.onkeyup = function(e) {
+   var key = e.keyCode ? e.keyCode : e.which;
+
+   if (key == 38) {
+   start();}
+}
 
 
