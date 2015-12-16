@@ -79,12 +79,12 @@ var NJ = {
 		
 		requestId = requestAnimFrame( NJ.loop );
 
--
+
 		if(spongeY > 1200){
 			console.log(spongeY);
 			console.log(requestId);
 
-			stop();
+			//stop();
 		}
 	},
 
@@ -154,15 +154,12 @@ function updateSponge(){
 	spongeX = spongeX + gamma;
 	
 	var jumpHeight = 15;
-	
-	
 	var temp = spongeUpNr/340;
-	
 	
 	//Y
 	if(temp<0.1)
 		temp=0.1;
-	temp=temp*2;
+	temp=temp*2.5;
 	if(spongeUpBool){
 		spongeY = spongeY + jumpHeight*temp;
 		spongeUpNr = spongeUpNr + jumpHeight*temp;

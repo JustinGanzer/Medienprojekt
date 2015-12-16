@@ -25,5 +25,6 @@ function toggleFullScreen() {
   else {
     cancelFullScreen.call(doc);
   }
+  
 }
 
