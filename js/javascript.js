@@ -56,8 +56,12 @@ var NJ = {
 			NJ.entities.forEach(function(entry){
 				entry.isHit();
 			});
+		}else{
+			NJ.entities.forEach(function(entry){
+				entry.check();
+			});
 		}
-		
+		generatePlatforms();
 				
 
 	},
@@ -85,7 +89,7 @@ var NJ = {
 		
 		requestId = requestAnimFrame( NJ.loop );
 
-		if(spongeY > 1200){
+		if(spongeY > 960){
 
 			console.log(spongeY);
 			console.log(requestId);
@@ -214,12 +218,13 @@ function updateSponge(){
 		}
 	}else{
 		
-		updatePlatforms(temp); //wenn nach oben gesprungen wird, werden die Plattformen mit nach oben gezogen
+		updatePlatforms(2*temp); //wenn nach oben gesprungen wird, werden die Plattformen mit nach oben gezogen
 		spongeY = spongeY - temp; //neue Höhe berechnen
 		spongeUpNr = spongeUpNr - temp; //SpongeUpNr berechnet die Schnelligkeit
 		punktzahl = punktzahl + temp; //Punktzahl
-		if(spongeUpNr < 0){ //Wenn hoch genug gesprungen wird, geht es wieder nach unten
+		if(spongeUpNr < 0 || spongeY<300){ //Wenn hoch genug gesprungen wird, geht es wieder nach unten
 			spongeUpBool = true;
+			spongeUpNr = 0;
 		}
 	}
 	
@@ -240,11 +245,22 @@ function updatePlatforms(temp_update){
 		});
 }
 
+//es werden so viele platformen hinzugefügt, bis es 50 gibt
+function generatePlatforms(){
+	while(NJ.entities.length<50){
+		var platform_temp = NJ.entities[NJ.entities.length-1];
+		var y = -Math.floor((Math.random() * 150) + 1) - 50 + platform_temp.y; //neue platform ist 20-100 pixel von der letzten platform entfernt
+		var x = Math.floor((Math.random() * 540) + 1); 
+		var new_platform = new Platform(x,y);
+		NJ.entities.push(new_platform);
+	}
+}
+
 var requestId;
 
 /* Hier wird das PLAYER Object definiert */
 Player = new Object();
-Player.Scale = 0.4;
+Player.Scale = 0.3;
 Player.IMAGE = new Image();
 Player.IMAGE.src = "./pictures/spongi.png";
 
@@ -269,17 +285,18 @@ function Platform(x,y){
 	
 	this.draw = function(){
 		NJ.ctx.drawImage(this.img,this.x,this.y);
-		this.check();
 	}
 
+	//wenn die plattform nicht mehr sichtbar ist, wird sie gelöscht
 	this.check = function(){
-		if(this.y>1200){
+		if(this.y>960){
 			var index = NJ.entities.indexOf(this);
 			NJ.entities.splice(index, 1);
 			console.log("test");
 		}
 	}
 	
+	//überprüfung, ob der spieler eine plattform erwischt
 	this.isHit = function(){
 		if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
 			if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55){
@@ -308,7 +325,7 @@ function start(){
 	var tempPlatform2 = new Platform(300, 750);
 	var tempPlatform3 = new Platform(225, 450);
 	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3)
-	gamescreen = new Gamescreen();
+	currentScreen=gamescreen;
 	NJ.loop();
 }
 
@@ -362,7 +379,6 @@ var MenuButton = function(x,y,src,func){
 }
 
 var Gamescreen = function(){
-	currentScreen = this;
 
 	this.touchFunc = function(e){
 		var touch = e.touches[0];
@@ -374,6 +390,7 @@ var Gamescreen = function(){
 
 var Menu = function(){
 	currentScreen = this;
+	gamescreen = new Gamescreen();
 	var buttons = [];
 	var placeholder = function(){
 		alert("Button clicked");
