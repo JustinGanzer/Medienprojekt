@@ -183,7 +183,7 @@ var currentScreen = null;
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 
 function updateSponge(){
-	spongeX = spongeX + gamma;
+	
 	
 	var jumpHeight = 15;
 	var temp = spongeUpNr/340;
@@ -191,22 +191,35 @@ function updateSponge(){
 	//Y
 	if(temp<0.1)
 		temp=0.1;
-	temp=temp*2.5;
+	temp=temp*2;
 	if(spongeUpBool){
 		spongeY = spongeY + jumpHeight*temp;
-		spongeUpNr = spongeUpNr + jumpHeight*temp;
-		if(spongeUpNr > 340)
-			spongeUpBool = false;
+
+		
+		
+		if(spongeUpNr > 340){
+			//spongeUpBool = false;
+			console.log("test1");
+		}else{
+			spongeUpNr = spongeUpNr + jumpHeight*temp;
+		}
+			
+		
 	}else{
 		spongeY = spongeY - jumpHeight*temp;
 		spongeUpNr = spongeUpNr - jumpHeight*temp;
-		if(spongeUpNr < 0)
+		
+		if(spongeUpNr < 0){
 			spongeUpBool = true;
+			//console.log("test2");
+		}
+		
 	}
 	
 
 	
 	//X
+	spongeX = spongeX + gamma;
 	if(spongeX+Player.WIDTH/2>NJ.WIDTH)
 		spongeX=Player.WIDTH/2*(-1);
 	if(spongeX<(Player.WIDTH/2*(-1)))
@@ -247,10 +260,10 @@ function Platform(x,y){
 	
 	this.isHit = function(){
 		if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
-			if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+15){
+			if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55 && spongeUpBool){
 			SOUND.platformsound.play();
 			spongeUpNr = 345;
-			spongeUpBool = true;
+			spongeUpBool = false;
 			var index = NJ.entities.indexOf(this);
 			NJ.entities.splice(index, 1);
 			}
@@ -354,6 +367,7 @@ var Menu = function(){
 			entry.isHit(touch.pageX, touch.pageY);
 		}, false);
 	}
+
 };
 
 
@@ -388,7 +402,8 @@ window.onkeyup = function(e) {
    var key = e.keyCode ? e.keyCode : e.which;
 
    if (key == 38) {
-   start();}
+		start();
+	}
 }
 
 
