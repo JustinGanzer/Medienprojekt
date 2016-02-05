@@ -186,35 +186,46 @@ var currentScreen = null;
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 
+
+//update players position
 function updateSponge(){
-	
+
+	/*
+	Erklärung:
+	jumpHeight - individuell einstellbare Sprunghöhe
+	temp - wie hoch der Spieler tatsächlich springen soll
+	spongeUpBool - ACHTUNG: Koordinatenursprung ist OBEN LINKS
+	deshalb fällt er bei TRUE und springt nach oben bei FALSE !!!!!
+
+	SpongeUpNr - berechnet die Schnelligkeit
+	*/
 	
 	var jumpHeight = 15;
 	var temp = spongeUpNr/340;
 	
-	//Y
-	if(temp<0.1)
+	//Y height - höhe
+	if(temp<0.1) //temp soll nicht zu klein werden
 		temp=0.1;
 	temp=temp*2*jumpHeight;
 	if(spongeUpBool){
-		spongeY = spongeY + temp;
-		if(!(spongeUpNr > 340)){
+		spongeY = spongeY + temp; //neue Höhe berechnen
+		if(!(spongeUpNr > 340)){ //Ess soll nicht zu schnell nach unten gesprungen werden (spongeUpNr berechnet die Sprunghöhe)
 			spongeUpNr = spongeUpNr + temp;
 		}
 	}else{
 		
-		updatePlatforms(temp);
-		spongeY = spongeY - temp;
-		spongeUpNr = spongeUpNr - temp;
-		punktzahl = punktzahl + temp;
-		if(spongeUpNr < 0){
+		updatePlatforms(temp); //wenn nach oben gesprungen wird, werden die Plattformen mit nach oben gezogen
+		spongeY = spongeY - temp; //neue Höhe berechnen
+		spongeUpNr = spongeUpNr - temp; //SpongeUpNr berechnet die Schnelligkeit
+		punktzahl = punktzahl + temp; //Punktzahl
+		if(spongeUpNr < 0){ //Wenn hoch genug gesprungen wird, geht es wieder nach unten
 			spongeUpBool = true;
-			//console.log("test2");
 		}
 	}
 	
-	//X
-	spongeX = spongeX + gamma;
+	//X - horizontale
+	spongeX = spongeX + gamma; //dem aktuellen x-wert wird der gamme-wert hinzugefügt
+	//wenn aus dem bildschirm gesprungen wird, kommt man aus der anderen seite wieder raus
 	if(spongeX+Player.WIDTH/2>NJ.WIDTH)
 		spongeX=Player.WIDTH/2*(-1);
 	if(spongeX<(Player.WIDTH/2*(-1)))
