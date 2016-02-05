@@ -89,6 +89,7 @@ var NJ = {
 
 			stop();
 		}
+
 	},
 
 	resize: function() {
@@ -194,29 +195,18 @@ function updateSponge(){
 	temp=temp*2;
 	if(spongeUpBool){
 		spongeY = spongeY + jumpHeight*temp;
-
-		
-		
-		if(spongeUpNr > 340){
-			//spongeUpBool = false;
-			console.log("test1");
-		}else{
+		if(!(spongeUpNr > 340)){
 			spongeUpNr = spongeUpNr + jumpHeight*temp;
 		}
-			
-		
 	}else{
 		spongeY = spongeY - jumpHeight*temp;
 		spongeUpNr = spongeUpNr - jumpHeight*temp;
-		
+		punktzahl = punktzahl + jumpHeight*temp;
 		if(spongeUpNr < 0){
 			spongeUpBool = true;
 			//console.log("test2");
 		}
-		
 	}
-	
-
 	
 	//X
 	spongeX = spongeX + gamma;
@@ -284,6 +274,7 @@ function start(){
 	spongeY = 500;
 	spongeUpBool = true;
 	spongeUpNr = 0;
+	punktzahl = 0;
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
@@ -300,6 +291,12 @@ function stop(){
 	if(requestId){
 		window.cancelAnimationFrame(requestId);
 		requestId = undefined;
+		punktzahl = parseInt(punktzahl);
+		alert("Verloren! Punktzahl: " + punktzahl);
+		NJ.entities = [];
+		NJ.render();
+		
+		menu.draw();
 	}
 }
 
@@ -371,7 +368,7 @@ var Menu = function(){
 };
 
 
-var menu = new Menu();
+menu = new Menu();
 
 window.onload = function(){
 	
