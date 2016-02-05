@@ -52,9 +52,12 @@ var NJ = {
 		//PLAYERCHARAkTER
 		gamma = tiltValue/2;
 		updateSponge();
-		NJ.entities.forEach(function(entry){
-			entry.isHit();
-		});
+		if(spongeUpBool){
+			NJ.entities.forEach(function(entry){
+				entry.isHit();
+			});
+		}
+		
 				
 
 	},
@@ -192,16 +195,18 @@ function updateSponge(){
 	//Y
 	if(temp<0.1)
 		temp=0.1;
-	temp=temp*2;
+	temp=temp*2*jumpHeight;
 	if(spongeUpBool){
-		spongeY = spongeY + jumpHeight*temp;
+		spongeY = spongeY + temp;
 		if(!(spongeUpNr > 340)){
-			spongeUpNr = spongeUpNr + jumpHeight*temp;
+			spongeUpNr = spongeUpNr + temp;
 		}
 	}else{
-		spongeY = spongeY - jumpHeight*temp;
-		spongeUpNr = spongeUpNr - jumpHeight*temp;
-		punktzahl = punktzahl + jumpHeight*temp;
+		
+		updatePlatforms(temp);
+		spongeY = spongeY - temp;
+		spongeUpNr = spongeUpNr - temp;
+		punktzahl = punktzahl + temp;
 		if(spongeUpNr < 0){
 			spongeUpBool = true;
 			//console.log("test2");
@@ -216,6 +221,13 @@ function updateSponge(){
 		spongeX=NJ.WIDTH-Player.WIDTH/2;
 	
 };
+
+function updatePlatforms(temp_update){
+	NJ.entities.forEach(function(entry){
+			entry.y = entry.y + temp_update;
+			entry.img.x = entry.img.y + temp_update;
+		});
+}
 
 var requestId;
 
@@ -245,12 +257,21 @@ function Platform(x,y){
 	}
 	
 	this.draw = function(){
-		NJ.ctx.drawImage(img,x,y);
+		NJ.ctx.drawImage(this.img,this.x,this.y);
+		this.check();
+	}
+
+	this.check = function(){
+		if(this.y>1200){
+			var index = NJ.entities.indexOf(this);
+			NJ.entities.splice(index, 1);
+			console.log("test");
+		}
 	}
 	
 	this.isHit = function(){
 		if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
-			if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55 && spongeUpBool){
+			if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55){
 			SOUND.platformsound.play();
 			spongeUpNr = 345;
 			spongeUpBool = false;
@@ -261,13 +282,6 @@ function Platform(x,y){
 	}
 }	
 
-function updatePlatforms(){
-	
-	NJ.entities.forEach(function(entry){
-			entry.isHit();
-		});
-	
-}
 	
 function start(){
 	spongeX = NJ.WIDTH/4;
@@ -283,7 +297,7 @@ function start(){
 	var tempPlatform2 = new Platform(300, 750);
 	var tempPlatform3 = new Platform(225, 450);
 	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3)
-	
+	gamescreen = new Gamescreen();
 	NJ.loop();
 }
 
@@ -295,7 +309,7 @@ function stop(){
 		alert("Verloren! Punktzahl: " + punktzahl);
 		NJ.entities = [];
 		NJ.render();
-		
+		currentScreen = menu;
 		menu.draw();
 	}
 }
@@ -323,6 +337,7 @@ var MenuButton = function(x,y,src,func){
 		NJ.ctx.drawImage(this.img,this.img.x1,this.img.y1);
 	}
 	
+
 	
 	this.isHit = function(x,y){
 		x = (x - NJ.offset.left) / NJ.scale;
@@ -333,6 +348,15 @@ var MenuButton = function(x,y,src,func){
 	}
 	}
 	
+}
+
+var Gamescreen = function(){
+	currentScreen = this;
+
+	this.touchFunc = function(e){
+		var touch = e.touches[0];
+		alert("Shooting not implemented yet!");
+	}
 }
 
 
