@@ -91,9 +91,6 @@ var NJ = {
 
 		if(spongeY > 960){
 
-			console.log(spongeY);
-			console.log(requestId);
-
 			stop();
 		}
 
@@ -186,6 +183,7 @@ window.addEventListener('load', NJ.init, false);
 window.addEventListener('resize', NJ.resize, false);
 
 var currentScreen = null;	
+sprungMax = 40;
 		
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
@@ -203,7 +201,7 @@ function updateSponge(){
 
 	SpongeUpNr - berechnet die Schnelligkeit
 	*/
-	
+	/*
 	var jumpHeight = 15;
 	var temp = spongeUpNr/340;
 	
@@ -218,7 +216,7 @@ function updateSponge(){
 		}
 	}else{
 		
-		updatePlatforms(2*temp); //wenn nach oben gesprungen wird, werden die Plattformen mit nach oben gezogen
+		updatePlatforms(2*temp*boost); //wenn nach oben gesprungen wird, werden die Plattformen mit nach oben gezogen
 		spongeY = spongeY - temp; //neue Höhe berechnen
 		spongeUpNr = spongeUpNr - temp; //SpongeUpNr berechnet die Schnelligkeit
 		punktzahl = punktzahl + temp; //Punktzahl
@@ -227,6 +225,40 @@ function updateSponge(){
 			spongeUpNr = 0;
 		}
 	}
+	*/
+
+	var playerspeed = Math.sin((sprungdauer/sprungMax)*(Math.PI/2)); //playerspeed wird sinusförmig!
+	//var playerspeed = sprungdauer/50;
+	if(sprungdauer>sprungMax){ // man soll beim runterfallen ja nicht langsamer werden :D
+		playerspeed = sprungdauer/10;
+	}
+	playerspeed = playerspeed*15; //allgemeine sprunghöhe
+	var platformAndFallingSpeed = playerspeed;
+	playerspeed = playerspeed*(currentPlatformX-300)/960; //playerspeed ist abhängig vom ausgangspunkt
+
+
+	if(spongeUpBool){
+		spongeY = spongeY + platformAndFallingSpeed;  
+		sprungdauer++;
+
+	}else{
+		spongeY = spongeY - playerspeed;
+		updatePlatforms(platformAndFallingSpeed*boost);
+		punktzahl = punktzahl + playerspeed * boost;
+		sprungdauer--;
+		if(sprungdauer<=1 ){
+			spongeUpBool = true;
+			sprungdauer=1;
+		}
+			
+	}
+
+
+
+	if(boost>1) //boost soll kontinuierlich abgebaut werden
+		boost = boost - (currentBoost/sprungMax);
+	else
+		boost = 1;
 	
 	//X - horizontale
 	spongeX = spongeX + gamma; //dem aktuellen x-wert wird der gamme-wert hinzugefügt
@@ -251,7 +283,12 @@ function generatePlatforms(){
 		var platform_temp = NJ.entities[NJ.entities.length-1];
 		var y = -Math.floor((Math.random() * 150) + 1) - 50 + platform_temp.y; //neue platform ist 20-100 pixel von der letzten platform entfernt
 		var x = Math.floor((Math.random() * 540) + 1); 
-		var new_platform = new Platform(x,y);
+		var platformType = Math.floor((Math.random() * 100) + 1); //10%wahrscheinlichkeit für schnellere plattformen
+		if(platformType>90)
+			platformType = 2;
+		else
+			platformType = 1;
+		var new_platform = new Platform(x,y,platformType);
 		NJ.entities.push(new_platform);
 	}
 }
@@ -269,14 +306,27 @@ Player.IMAGE.onload = function(){
 	Player.HEIGHT = Player.IMAGE.height * Player.Scale;
 }
 
-function Platform(x,y){
+function Platform(x,y,platformType){
 	this.img = new Image();
 	this.xOffset = 100;
 	this.x = x;
 	this.y = y;
 	this.img.x = x;
 	this.img.y = y;
-	this.img.src = "./pictures/Platform.png";
+	this.img.src = "./pictures/Platform" + platformType + ".png";
+	this.boost = 1;
+
+	switch(platformType){
+		case 1:
+		this.boost = 1;
+		break;
+
+		case 2:
+		this.boost = 4;
+		break;
+
+	}
+	
 	
 	var img = this.img;
 	this.img.onload = function(){
@@ -292,7 +342,6 @@ function Platform(x,y){
 		if(this.y>960){
 			var index = NJ.entities.indexOf(this);
 			NJ.entities.splice(index, 1);
-			console.log("test");
 		}
 	}
 	
@@ -302,9 +351,14 @@ function Platform(x,y){
 			if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55){
 			SOUND.platformsound.play();
 			spongeUpNr = 345;
+			sprungdauer = sprungMax;
+			currentPlatformX = this.y;
 			spongeUpBool = false;
+			boost = this.boost;
+			currentBoost= 1;
 			var index = NJ.entities.indexOf(this);
 			NJ.entities.splice(index, 1);
+			console.log("platform hitted at " + this.y);
 			}
 		}
 	}
@@ -313,17 +367,22 @@ function Platform(x,y){
 	
 function start(){
 	spongeX = NJ.WIDTH/4;
+	currentPlatformX = NJ.WIDTH/4;
 	spongeY = 500;
 	spongeUpBool = true;
 	spongeUpNr = 0;
+	sprungdauer=sprungMax/2;
 	punktzahl = 0;
+	currentBoost=0;
+	boost = 1;
+
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
 	
-	var tempPlatform = new Platform(150, 750);
-	var tempPlatform2 = new Platform(300, 750);
-	var tempPlatform3 = new Platform(225, 450);
+	var tempPlatform = new Platform(150, 750,1);
+	var tempPlatform2 = new Platform(300, 750,1);
+	var tempPlatform3 = new Platform(225, 450,1);
 	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3)
 	currentScreen=gamescreen;
 	NJ.loop();
@@ -371,7 +430,6 @@ var MenuButton = function(x,y,src,func){
 		x = (x - NJ.offset.left) / NJ.scale;
 		y = (y - NJ.offset.top) / NJ.scale;
 		if(this.x1 < x && x < this.x2 && this.y1 < y && y < this.y2){
-			console.log(x);
 			this.func();
 	}
 	}
