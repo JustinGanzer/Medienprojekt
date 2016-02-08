@@ -306,6 +306,38 @@ Player.IMAGE.onload = function(){
 	Player.HEIGHT = Player.IMAGE.height * Player.Scale;
 }
 
+
+function Enemy(x, y){
+    this.img = new Image();
+    this.x = x; 
+    this.y = y;
+    this.img.x = x;
+	this.img.y = y + 30;
+	this.img.src = "./pictures/krabbiburger.png";
+    
+    var img = this.img;
+	this.img.onload = function(){
+		return;
+	}
+    
+    this.draw = function(){
+		NJ.ctx.drawImage(this.img,this.x,this.y);
+	}
+
+//	this.check = function(){
+//		if(this.y>960){
+//			var index = NJ.entities.indexOf(this);
+//			NJ.entities.splice(index, 1);
+//			console.log("test");
+//		}
+//	}
+	
+	this.isHit = function(){
+			
+    }
+	
+}	
+
 function Platform(x,y,platformType){
 	this.img = new Image();
 	this.xOffset = 100;
@@ -380,10 +412,12 @@ function start(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
 	
+
 	var tempPlatform = new Platform(150, 750,1);
 	var tempPlatform2 = new Platform(300, 750,1);
 	var tempPlatform3 = new Platform(225, 450,1);
 	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3)
+
 	currentScreen=gamescreen;
 	NJ.loop();
 }
@@ -454,11 +488,11 @@ var Menu = function(){
 		alert("Button clicked");
 		return true;
 	};
-	var startB = new MenuButton(220,100,"./pictures/start.png",start);
-	var hs = new MenuButton(220,250,"./pictures/highscore.png",placeholder);
-	var c = new MenuButton(220,400,"./pictures/charakter.png",placeholder);
-	var fs = new MenuButton(220,800,"./pictures/fullscreen.png",toggleFullScreen);
-	buttons.push(startB,hs,c,fs);
+	var startButton = new MenuButton(220,100,"./pictures/start.png",start);
+	var highscoreButton = new MenuButton(220,250,"./pictures/highscore.png",placeholder);
+	var charakterButton = new MenuButton(220,400,"./pictures/charakter.png",placeholder);
+	var fullscreenButton = new MenuButton(220,800,"./pictures/fullscreen.png",toggleFullScreen);
+	buttons.push(startButton,highscoreButton,charakterButton,fullscreenButton);
 	
 	this.draw = function(){
 		buttons.forEach(function(entry){
