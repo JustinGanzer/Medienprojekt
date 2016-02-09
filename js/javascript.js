@@ -265,6 +265,7 @@ function updatePlatforms(temp_update){
 function generatePlatforms(){
 	while(NJ.entities.length<50){
 		var entity_temp = NJ.entities[NJ.entities.length-1];
+        console.log(entity_temp);
 		var y = -Math.floor((Math.random() * 150) + 1) - 50 + entity_temp.y; //neue platform ist 20-100 pixel von der letzten platform entfernt
 		var x = Math.floor((Math.random() * 540) + 1); 
 		var platformType = Math.floor((Math.random() * 100) + 1); //10%wahrscheinlichkeit für schnellere plattformen
@@ -274,18 +275,21 @@ function generatePlatforms(){
 			platformType = 1;
 		var new_platform = new Platform(x, y, platformType);
 		NJ.entities.push(new_platform);
-//        generateEnemy(x, y);
+        generateEnemy(x, y);
 	}
 }
 
 function generateEnemy(x, y){
 		var random = Math.floor((Math.random() * 100) + 1); 
-		if(random > 90)
-			var enemy = new Enemy(x, y, 1);
-		else if (random > 80)
-			var enemy = new Enemy(x, y, 1);
+		if(random > 90){
+            var enemy = new Enemy(x, y, 1);
+            NJ.entities.push(enemy);        
+        } else if (random > 80){
+            var enemy = new Enemy(x, y, 2);
+            NJ.entities.push(enemy);
+        }
+			
 		
-		NJ.entities.push(enemy);
 	   console.log("test");
 }
 
@@ -310,7 +314,11 @@ function Enemy(x, y, enemyType){
     this.img.x = x;
 	this.img.y = y;
     this.img.src = "./pictures/Enemy" + enemyType + ".png";
-
+    
+    var x_temp = x;
+    var y_temp = y;
+    
+    
     var img = this.img;
 	this.img.onload = function(){
 		return;
@@ -328,17 +336,17 @@ function Enemy(x, y, enemyType){
 	}
 	var counter = 0;
 	this.isHit = function(){
-        console.log(this.y);
-        console.log(this.x);
-        switch(enemyType){
-		case 1:
-		if((spongeX >= this.x && spongeX <= this.x + 100)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + 100)){
-            if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y + 100){
-                console.log(isHitted);
-                isHitted = true;
-            }
-        }
-		break;
+//        console.log(this.y);
+//        console.log(this.x);
+//        switch(enemyType){
+//		case 1:
+//		if((spongeX >= this.x && spongeX <= this.x + this.img.x)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.img.x)){
+//            if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y + 100){
+//                console.log(isHitted);
+//                isHitted = true;
+//            }
+//        }
+//		break;
         
 //		case 2:
 //		if(){
@@ -352,7 +360,7 @@ function Enemy(x, y, enemyType){
 //        }
 //		break;
 
-	   }
+//	   }
         
     }
 }
@@ -440,7 +448,7 @@ function start(){
 	var tempPlatform2 = new Platform(300, 750,1);
 	var tempPlatform3 = new Platform(225, 450,1);
     
-    var enemy = new Enemy(200, 400, 1)
+    var enemy = new Enemy(300, 750, 2)
    
 	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3, enemy);
 
