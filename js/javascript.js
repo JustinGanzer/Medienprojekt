@@ -265,7 +265,6 @@ function updatePlatforms(temp_update){
 function generatePlatforms(){
 	while(NJ.entities.length<50){
 		var entity_temp = NJ.entities[NJ.entities.length-1];
-        console.log(entity_temp);
 		var y = -Math.floor((Math.random() * 150) + 1) - 50 + entity_temp.y; //neue platform ist 20-100 pixel von der letzten platform entfernt
 		var x = Math.floor((Math.random() * 540) + 1); 
 		var platformType = Math.floor((Math.random() * 100) + 1); //10%wahrscheinlichkeit für schnellere plattformen
@@ -281,16 +280,13 @@ function generatePlatforms(){
 
 function generateEnemy(x, y){
 		var random = Math.floor((Math.random() * 100) + 1); 
-		if(random > 90){
+		if(random > 95){
             var enemy = new Enemy(x, y, 1);
             NJ.entities.push(enemy);        
-        } else if (random > 80){
+        } else if (random > 90){
             var enemy = new Enemy(x, y, 2);
             NJ.entities.push(enemy);
         }
-			
-		
-	   console.log("test");
 }
 
 var requestId;
@@ -309,8 +305,24 @@ Player.IMAGE.onload = function(){
 /* Hier werden die Gegner Objekte definiert, es gibt 3 Arten von Gegnern */
 function Enemy(x, y, enemyType){
     this.img = new Image();
-    this.x = x; 
-    this.y = y;
+    
+    switch(enemyType){
+		case 1:
+		this.x = x + 50;
+        this.y = y ;    
+		break;
+        
+		case 2:
+		this.x = x + 50;
+        this.y = y ;    
+		break;
+                
+        case 3:
+        this.x = x + 50;
+        this.y = y ;    
+		break;
+    }
+    
     this.img.x = x;
 	this.img.y = y;
     this.img.src = "./pictures/Enemy" + enemyType + ".png";
@@ -329,39 +341,18 @@ function Enemy(x, y, enemyType){
 	}
 
 	this.check = function(){
-		if(this.y>960){
+		if(this.y > 960){
 			var index = NJ.entities.indexOf(this);
 			NJ.entities.splice(index, 1);
 		}
 	}
-	var counter = 0;
 	this.isHit = function(){
-//        console.log(this.y);
-//        console.log(this.x);
-//        switch(enemyType){
-//		case 1:
-//		if((spongeX >= this.x && spongeX <= this.x + this.img.x)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.img.x)){
-//            if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y + 100){
-//                console.log(isHitted);
-//                isHitted = true;
-//            }
-//        }
-//		break;
-        
-//		case 2:
-//		if(){
-//            isHitted = true;
-//        }
-//		break;
-//                
-//        case 3:
-//		if(){
-//            isHitted = true;
-//        }
-//		break;
-
-//	   }
-        
+		if((spongeX >= this.x && spongeX <= this.x + this.img.x)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.img.x)){
+            if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y + 100){
+                console.log(isHitted);
+                isHitted = true;
+            }
+        }    
     }
 }
 
