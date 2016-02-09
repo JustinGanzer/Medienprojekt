@@ -282,16 +282,19 @@ function generatePlatforms(){
 
 function generateEnemy(x, y){
 		var random = Math.floor((Math.random() * 100) + 1); 
-		if(random > 91){
-            var enemy = new Enemy(x, y, 1);
-            NJ.entities.push(enemy);
-            return true;     
-        } else if (random > 90){
-            var enemy = new Enemy(x, y, 1);
-            NJ.entities.push(enemy);
-            return true;
+        if(NJ.entities[NJ.entities.length-1] instanceof Platform){
+            if(random > 91){
+                var enemy = new Enemy(x, y, 1);
+                NJ.entities.push(enemy);
+                return true;     
+            } else if (random > 90){
+                var enemy = new Enemy(x, y, 1);
+                NJ.entities.push(enemy);
+                return true;
+            } 
+        } else {
+            return false;
         }
-        return false;
 }
 
 var requestId;
