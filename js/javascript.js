@@ -639,12 +639,9 @@ function gameover(){
 		var y = 50;
 		draw();
 		NJ.ctx.drawImage(Player.IMAGE, x, y, Player.HEIGHT, Player.WIDTH);
-
-
-		end.play();
 		this.loop = function () {
 			if (y < 800) {
-				y = y + 10;
+				y = y + 20;
 				NJ.Draw.clear();
 				draw();
 				NJ.ctx.drawImage(Player.IMAGE, x, y, Player.HEIGHT, Player.WIDTH);
@@ -657,12 +654,10 @@ function gameover(){
 	}
 }
 
-var end;
-
 //Onload XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 window.onload = function(){
 	
-	document.ontouchmove = function(e){ 
+	document.ontouchmove = function(e){
 		e.preventDefault(); 
 	}
 	
