@@ -280,11 +280,11 @@ function generatePlatforms(){
 
 function generateEnemy(x, y){
 		var random = Math.floor((Math.random() * 100) + 1); 
-		if(random > 95){
+		if(random > 91){
             var enemy = new Enemy(x, y, 1);
             NJ.entities.push(enemy);        
         } else if (random > 90){
-            var enemy = new Enemy(x, y, 2);
+            var enemy = new Enemy(x, y, 1);
             NJ.entities.push(enemy);
         }
 }
@@ -308,18 +308,18 @@ function Enemy(x, y, enemyType){
     
     switch(enemyType){
 		case 1:
-		this.x = x + 50;
-        this.y = y ;    
+		this.x = x + 40;
+        this.y = y - 70;    
 		break;
         
 		case 2:
-		this.x = x + 50;
-        this.y = y ;    
+		this.x = x - 25;
+        this.y = y - 25;    
 		break;
                 
         case 3:
-        this.x = x + 50;
-        this.y = y ;    
+        this.x = x;
+        this.y = y;    
 		break;
     }
     
