@@ -226,34 +226,37 @@ function updateSponge(){
 		}
 	}
 	*/
+   if(isHitted){
+       var platformAndFallingSpeed = playerspeed;
+       playerspeed = playerspeed*(currentPlatformX-300)/960; //playerspeed ist abhängig vom ausgangspunkt
 
-	var playerspeed = Math.sin((sprungdauer/sprungMax)*(Math.PI/2)); //playerspeed wird sinusförmig!
-	//var playerspeed = sprungdauer/50;
-	if(sprungdauer>sprungMax){ // man soll beim runterfallen ja nicht langsamer werden :D
-		playerspeed = sprungdauer/10;
-	}
-	playerspeed = playerspeed*15; //allgemeine sprunghöhe
-	var platformAndFallingSpeed = playerspeed;
-	playerspeed = playerspeed*(currentPlatformX-300)/960; //playerspeed ist abhängig vom ausgangspunkt
+   } else {
+        var playerspeed = Math.sin((sprungdauer/sprungMax)*(Math.PI/2)); //playerspeed wird sinusförmig!
+        //var playerspeed = sprungdauer/50;
+        if(sprungdauer>sprungMax){ // man soll beim runterfallen ja nicht langsamer werden :D
+            playerspeed = sprungdauer/10;
+        }
+        playerspeed = playerspeed*15; //allgemeine sprunghöhe
+        var platformAndFallingSpeed = playerspeed;
+        playerspeed = playerspeed*(currentPlatformX-300)/960; //playerspeed ist abhängig vom ausgangspunkt
 
+        if(spongeUpBool){
+            spongeY = spongeY + platformAndFallingSpeed;  
+            sprungdauer++;
+        }else{
+            spongeY = spongeY - playerspeed;
+            updatePlatforms(platformAndFallingSpeed*boost);
+            punktzahl = punktzahl + playerspeed * boost;
+            sprungdauer--;
+            if(sprungdauer<=1 ){
+                spongeUpBool = true;
+                sprungdauer=1;
+            }
 
-	if(spongeUpBool){
-		spongeY = spongeY + platformAndFallingSpeed;  
-		sprungdauer++;
-
-	}else{
-		spongeY = spongeY - playerspeed;
-		updatePlatforms(platformAndFallingSpeed*boost);
-		punktzahl = punktzahl + playerspeed * boost;
-		sprungdauer--;
-		if(sprungdauer<=1 ){
-			spongeUpBool = true;
-			sprungdauer=1;
-		}
-			
-	}
-
-
+        }
+   }
+    
+	
 
 	if(boost>1) //boost soll kontinuierlich abgebaut werden
 		boost = boost - (currentBoost/sprungMax);
@@ -306,14 +309,17 @@ Player.IMAGE.onload = function(){
 	Player.HEIGHT = Player.IMAGE.height * Player.Scale;
 }
 
-
-function Enemy(x, y){
+/* Hier werden die Gegner Objekte definiert, es gibt 3 Arten von Gegnern */
+function Enemy(x, y, enemyType){
     this.img = new Image();
     this.x = x; 
     this.y = y;
     this.img.x = x;
 	this.img.y = y + 30;
-	this.img.src = "./pictures/krabbiburger.png";
+    
+    //this.img.src = "./pictures/Enemy" + enemyType + ".png";
+	// temporär ist nur ein Gegner da
+    this.img.src = "./pictures/krabbiburger.png";
     
     var img = this.img;
 	this.img.onload = function(){
@@ -324,20 +330,25 @@ function Enemy(x, y){
 		NJ.ctx.drawImage(this.img,this.x,this.y);
 	}
 
-//	this.check = function(){
-//		if(this.y>960){
-//			var index = NJ.entities.indexOf(this);
-//			NJ.entities.splice(index, 1);
-//			console.log("test");
-//		}
-//	}
+	this.check = function(){
+		if(this.y>960){
+			var index = NJ.entities.indexOf(this);
+			NJ.entities.splice(index, 1);
+		}
+	}
 	
 	this.isHit = function(){
-			
+        if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
+           if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55){
+            isHitted = true;    
+            console.log("enemy hitted at " + this.y);
+            }
+        }
     }
 	
-}	
+}
 
+/* Hier werden die Gegner Objekte definiert */
 function Platform(x,y,platformType){
 	this.img = new Image();
 	this.xOffset = 100;
@@ -402,6 +413,7 @@ function start(){
 	currentPlatformX = NJ.WIDTH/4;
 	spongeY = 500;
 	spongeUpBool = true;
+    isHitted = false;
 	spongeUpNr = 0;
 	sprungdauer=sprungMax/2;
 	punktzahl = 0;
@@ -416,7 +428,12 @@ function start(){
 	var tempPlatform = new Platform(150, 750,1);
 	var tempPlatform2 = new Platform(300, 750,1);
 	var tempPlatform3 = new Platform(225, 450,1);
-	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3)
+    
+   
+    var enemy = new Enemy(150, 500);
+   
+    
+	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3, enemy);
 
 	currentScreen=gamescreen;
 	NJ.loop();
