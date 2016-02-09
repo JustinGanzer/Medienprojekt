@@ -91,7 +91,7 @@ var NJ = {
 
 		if(spongeY > 960){
 
-			stop();
+			gameover();
 		}
 
 	},
@@ -457,17 +457,16 @@ function start(){
 }
 
 function stop(){
-	if(requestId){
-		window.cancelAnimationFrame(requestId);
-		requestId = undefined;
+
 		punktzahl = parseInt(punktzahl);
 		alert("Verloren! Punktzahl: " + punktzahl);
 		NJ.entities = [];
 		NJ.render();
+		isPaused = true;
 		currentScreen = menu;
 		SOUND.audio2.pause();
 		menu.draw();
-	}
+
 }
 
 var MenuButton = function(x,y,src,func){
@@ -538,6 +537,10 @@ var Menu = function(){
 	this.touchFunc = function(e){
 		
 		var touch = e.touches[0];
+		var randomizer = Math.floor((Math.random() * 5));
+		end = new Audio('./sounds/end' + randomizer + '.wav');
+		end.play();
+		end.pauseAudio();
 		buttons.forEach(function(entry) {
 			
 			entry.isHit(touch.pageX, touch.pageY);
@@ -618,6 +621,50 @@ function charselection(){
 
 }
 
+//GAMEOVERrrrrrrRRR...RRR!! Screen XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+function gameover(){
+	if(requestId) {
+		window.cancelAnimationFrame(requestId);
+		requestId = undefined;
+		currentScreen = null;
+		NJ.Draw.clear();
+		var img = new Image();
+		img.src = "./pictures/topf.png";
+		img.onload = function () {
+			return;
+		}
+
+		var draw = function () {
+			NJ.ctx.drawImage(img, 40, 700);
+		}
+
+		var x = 250;
+		var y = 50;
+		draw();
+		NJ.ctx.drawImage(Player.IMAGE, x, y, Player.HEIGHT, Player.WIDTH);
+
+		var randomizer = Math.floor((Math.random() * 5));
+		end = new Audio('./sounds/end' + randomizer + '.wav');
+
+
+		end.play();
+		this.loop = function () {
+			if (y < 800) {
+				y = y + 10;
+				NJ.Draw.clear();
+				draw();
+				NJ.ctx.drawImage(Player.IMAGE, x, y, Player.HEIGHT, Player.WIDTH);
+				requestAnimFrame(this.loop);
+			} else {
+				stop()
+			}
+		}
+		requestAnimFrame(this.loop);
+	}
+}
+
+var end;
 
 //Onload XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 window.onload = function(){
