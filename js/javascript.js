@@ -153,6 +153,7 @@ NJ.Draw = {
 var SOUND = {
 	
 	platformsound : new Audio('./sounds/sound1.mp3'),
+	music : new Audio('./sounds/music.wav'),
 	tempsounds : 0,
 	
 	//THIS DARN FUNCTION is NEEDED, because I love it.. not really, but a user input triggered
@@ -160,15 +161,19 @@ var SOUND = {
 	initAudio : function(){
     var self = this;
     self.audio = SOUND.platformsound;
+	self.audio2 = SOUND.music;
+	self.audio2.loop = true;
     var startAudio = function(){
-                         self.audio.play();
-                         document.removeEventListener("touchstart", self.startAudio, false);
+		self.audio.play();
+		self.audio2.play();
+		document.removeEventListener("touchstart", self.startAudio, false);
                      }
     self.startAudio = startAudio;
 
     var pauseAudio = function(){
-                         self.audio.pause();
-                         self.audio.removeEventListener("play", self.pauseAudio, false);
+		self.audio.pause();
+		self.audio2.pause();
+		self.audio.removeEventListener("play", self.pauseAudio, false);
                      }
     self.pauseAudio = pauseAudio;
 
@@ -300,7 +305,7 @@ var requestId;
 
 /* Hier wird das PLAYER Object definiert */
 Player = new Object();
-Player.Scale = 0.3;
+Player.Scale = 0.5;
 Player.IMAGE = new Image();
 Player.IMAGE.src = "./pictures/spongi.png";
 
@@ -401,7 +406,7 @@ function Platform(x,y,platformType){
 			currentBoost= 1;
 			var index = NJ.entities.indexOf(this);
 			NJ.entities.splice(index, 1);
-			console.log("platform hitted at " + this.y);
+			//console.log("platform hitted at " + this.y);
 			}
 		}
 	}
@@ -423,6 +428,8 @@ function start(){
 	Player.IMAGE.onload = function(){
 		NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
 	}
+
+	SOUND.audio2.play()
 	
 
 	var tempPlatform = new Platform(150, 750,1);
@@ -436,6 +443,7 @@ function start(){
 	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3, enemy);
 
 	currentScreen=gamescreen;
+
 	NJ.loop();
 }
 
@@ -448,6 +456,7 @@ function stop(){
 		NJ.entities = [];
 		NJ.render();
 		currentScreen = menu;
+		SOUND.audio2.pause();
 		menu.draw();
 	}
 }
