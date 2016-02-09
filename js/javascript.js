@@ -264,10 +264,10 @@ function updatePlatforms(temp_update){
 //es werden so viele platformen hinzugefügt, bis es 50 gibt
 function generatePlatforms(){
 	while(NJ.entities.length<50){
-		if(generateEnemy){
-			var entity_temp = NJ.entities[NJ.entities.length-1];
-			var y = -Math.floor((Math.random() * 150) + 1) - 50 + entity_temp.y; //neue platform ist 20-100 pixel von der letzten platform entfernt
-			var x = Math.floor((Math.random() * 540) + 1); 
+		var entity_temp = NJ.entities[NJ.entities.length-1];
+		var y = -Math.floor((Math.random() * 150) + 1) - 50 + entity_temp.y; //neue platform ist 20-100 pixel von der letzten platform entfernt
+		var x = Math.floor((Math.random() * 540) + 1); 
+		if(!generateEnemy(x,y)){
 			var platformType = Math.floor((Math.random() * 100) + 1); //10%wahrscheinlichkeit für schnellere plattformen
 			if(platformType>90)
 				platformType = 2;   
