@@ -61,8 +61,7 @@ var NJ = {
 				entry.check();
 			});
 		}
-		generatePlatforms();
-				
+		generatePlatforms();			
 
 	},
 
@@ -231,38 +230,38 @@ function updateSponge(){
 		}
 	}
 	*/
-   if(isHitted){
-       var platformAndFallingSpeed = playerspeed;
-       playerspeed = playerspeed*(currentPlatformX-300)/960; //playerspeed ist abhängig vom ausgangspunkt
+    /* 
+    Uberprüft ob der Spieler getroffen wurde, wenn dies der Fall ist fällt der Spieler nur noch nach unten, 
+    ist dies nicht der Fall so wird ganz normal weiter gesprungen 
+    */
+    if(isHitted){
+       spongeUpBool = true;
+    } 
+    var playerspeed = Math.sin((sprungdauer/sprungMax)*(Math.PI/2)); //playerspeed wird sinusförmig!
+    //var playerspeed = sprungdauer/50;
+    if(sprungdauer>sprungMax){ // man soll beim runterfallen ja nicht langsamer werden :D
+        playerspeed = sprungdauer/10;
+    }
+    playerspeed = playerspeed*15; //allgemeine sprunghöhe
+    var platformAndFallingSpeed = playerspeed;
+    playerspeed = playerspeed*(currentPlatformX-300)/960; //playerspeed ist abhängig vom ausgangspunkt
 
-   } else {
-        var playerspeed = Math.sin((sprungdauer/sprungMax)*(Math.PI/2)); //playerspeed wird sinusförmig!
-        //var playerspeed = sprungdauer/50;
-        if(sprungdauer>sprungMax){ // man soll beim runterfallen ja nicht langsamer werden :D
-            playerspeed = sprungdauer/10;
+    if(spongeUpBool){
+        spongeY = spongeY + platformAndFallingSpeed;  
+        sprungdauer++;
+    }else{
+        spongeY = spongeY - playerspeed;
+        updatePlatforms(platformAndFallingSpeed*boost);
+        punktzahl = punktzahl + playerspeed * boost;
+        sprungdauer--;
+        if(sprungdauer<=1 ){
+            spongeUpBool = true;
+            sprungdauer=1;
         }
-        playerspeed = playerspeed*15; //allgemeine sprunghöhe
-        var platformAndFallingSpeed = playerspeed;
-        playerspeed = playerspeed*(currentPlatformX-300)/960; //playerspeed ist abhängig vom ausgangspunkt
 
-        if(spongeUpBool){
-            spongeY = spongeY + platformAndFallingSpeed;  
-            sprungdauer++;
-        }else{
-            spongeY = spongeY - playerspeed;
-            updatePlatforms(platformAndFallingSpeed*boost);
-            punktzahl = punktzahl + playerspeed * boost;
-            sprungdauer--;
-            if(sprungdauer<=1 ){
-                spongeUpBool = true;
-                sprungdauer=1;
-            }
+    }
 
-        }
-   }
     
-	
-
 	if(boost>1) //boost soll kontinuierlich abgebaut werden
 		boost = boost - (currentBoost/sprungMax);
 	else
@@ -288,17 +287,29 @@ function updatePlatforms(temp_update){
 //es werden so viele platformen hinzugefügt, bis es 50 gibt
 function generatePlatforms(){
 	while(NJ.entities.length<50){
-		var platform_temp = NJ.entities[NJ.entities.length-1];
-		var y = -Math.floor((Math.random() * 150) + 1) - 50 + platform_temp.y; //neue platform ist 20-100 pixel von der letzten platform entfernt
+		var entity_temp = NJ.entities[NJ.entities.length-1];
+		var y = -Math.floor((Math.random() * 150) + 1) - 50 + entity_temp.y; //neue platform ist 20-100 pixel von der letzten platform entfernt
 		var x = Math.floor((Math.random() * 540) + 1); 
 		var platformType = Math.floor((Math.random() * 100) + 1); //10%wahrscheinlichkeit für schnellere plattformen
 		if(platformType>90)
-			platformType = 2;
-		else
+			platformType = 2;   
+        else
 			platformType = 1;
-		var new_platform = new Platform(x,y,platformType);
+		var new_platform = new Platform(x, y, platformType);
 		NJ.entities.push(new_platform);
+        generateEnemy(x, y);
 	}
+}
+
+function generateEnemy(x, y){
+		var random = Math.floor((Math.random() * 100) + 1); //10%wahrscheinlichkeit für schnellere plattformen
+		if(random > 90)
+			var enemy = new Enemy(x, y, 1);
+		else if (random > 80)
+			var enemy = new Enemy(x, y, 1);
+		
+		NJ.entities.push(enemy);
+	   console.log("test");
 }
 
 var requestId;
@@ -320,12 +331,9 @@ function Enemy(x, y, enemyType){
     this.x = x; 
     this.y = y;
     this.img.x = x;
-	this.img.y = y + 30;
-    
-    //this.img.src = "./pictures/Enemy" + enemyType + ".png";
-	// temporär ist nur ein Gegner da
-    this.img.src = "./pictures/krabbiburger.png";
-    
+	this.img.y = y;
+    this.img.src = "./pictures/Enemy" + enemyType + ".png";
+
     var img = this.img;
 	this.img.onload = function(){
 		return;
@@ -341,20 +349,18 @@ function Enemy(x, y, enemyType){
 			NJ.entities.splice(index, 1);
 		}
 	}
-	
+	var counter = 0;
 	this.isHit = function(){
-        if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
-           if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55){
+        if(counter == 100){
             isHitted = true;    
-            console.log("enemy hitted at " + this.y);
-            }
+            console.log(isHitted);
+
         }
     }
-	
 }
 
 /* Hier werden die Gegner Objekte definiert */
-function Platform(x,y,platformType){
+function Platform(x, y ,platformType){
 	this.img = new Image();
 	this.xOffset = 100;
 	this.x = x;
@@ -435,12 +441,8 @@ function start(){
 	var tempPlatform = new Platform(150, 750,1);
 	var tempPlatform2 = new Platform(300, 750,1);
 	var tempPlatform3 = new Platform(225, 450,1);
-    
    
-    var enemy = new Enemy(150, 500);
-   
-    
-	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3, enemy);
+	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3);
 
 	currentScreen=gamescreen;
 
