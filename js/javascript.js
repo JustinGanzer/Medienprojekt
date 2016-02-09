@@ -537,10 +537,6 @@ var Menu = function(){
 	this.touchFunc = function(e){
 		
 		var touch = e.touches[0];
-		var randomizer = Math.floor((Math.random() * 5));
-		end = new Audio('./sounds/end' + randomizer + '.wav');
-		end.play();
-		end.pauseAudio();
 		buttons.forEach(function(entry) {
 			
 			entry.isHit(touch.pageX, touch.pageY);
@@ -643,9 +639,6 @@ function gameover(){
 		var y = 50;
 		draw();
 		NJ.ctx.drawImage(Player.IMAGE, x, y, Player.HEIGHT, Player.WIDTH);
-
-		var randomizer = Math.floor((Math.random() * 5));
-		end = new Audio('./sounds/end' + randomizer + '.wav');
 
 
 		end.play();
