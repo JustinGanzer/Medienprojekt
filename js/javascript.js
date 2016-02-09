@@ -12,6 +12,7 @@ var NJ = {
 	currentHeight:  null,
 	canvas: null,
 	ctx:  null,
+	character: 0,
 	
 	scale:  1,
     // the position of the canvas
@@ -153,7 +154,7 @@ NJ.Draw = {
 var SOUND = {
 	
 	platformsound : new Audio('./sounds/sound1.mp3'),
-	music : new Audio('./sounds/music.wav'),
+	music : new Audio('./sounds/music0.wav'),
 	tempsounds : 0,
 	
 	//THIS DARN FUNCTION is NEEDED, because I love it.. not really, but a user input triggered
@@ -172,7 +173,7 @@ var SOUND = {
 
     var pauseAudio = function(){
 		self.audio.pause();
-		self.audio2.pause();
+		//self.audio2.pause();
 		self.audio.removeEventListener("play", self.pauseAudio, false);
                      }
     self.pauseAudio = pauseAudio;
@@ -304,7 +305,7 @@ var requestId;
 Player = new Object();
 Player.Scale = 0.5;
 Player.IMAGE = new Image();
-Player.IMAGE.src = "./pictures/spongi.png";
+Player.IMAGE.src = "./pictures/spongi0.png";
 
 Player.IMAGE.onload = function(){
 	Player.WIDTH = Player.IMAGE.width * Player.Scale;
@@ -499,7 +500,7 @@ var Menu = function(){
 	};
 	var startButton = new MenuButton(220,100,"./pictures/start.png",start);
 	var highscoreButton = new MenuButton(220,250,"./pictures/highscore.png",placeholder);
-	var charakterButton = new MenuButton(220,400,"./pictures/charakter.png",placeholder);
+	var charakterButton = new MenuButton(220,400,"./pictures/charakter.png",charselection);
 	var fullscreenButton = new MenuButton(220,800,"./pictures/fullscreen.png",toggleFullScreen);
 	buttons.push(startButton,highscoreButton,charakterButton,fullscreenButton);
 	
@@ -519,10 +520,81 @@ var Menu = function(){
 	}
 
 };
-
-
+//Single Instance
 menu = new Menu();
 
+
+//Character selection XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+var selectChar = function(x){
+	currentScreen = menu;
+	NJ.Draw.clear();
+	NJ.character = x;
+
+	//Player.IMAGE = new Image();
+	if(NJ.character == 0) {
+		Player.IMAGE.src = "./pictures/spongi0.png";
+	}
+	else{
+		Player.IMAGE.src = "./pictures/spongi1.png";
+	}
+	Player.IMAGE.onload = function(){
+		Player.WIDTH = Player.IMAGE.width * Player.Scale;
+		Player.HEIGHT = Player.IMAGE.height * Player.Scale;
+	}
+
+	SOUND.music = new Audio('./sounds/music' + NJ.character + '.wav');
+	SOUND.audio2 = SOUND.music;
+	SOUND.audio2.loop = true;
+
+	currentScreen.draw();
+}
+
+var Chars = function(){
+	currentScreen = this;
+
+	var buttons2 = [];
+
+	var Char1 = new MenuButton(150,400,"./pictures/spongi0.png",function(){selectChar(0)});
+	var Char2 = new MenuButton(300,400,"./pictures/spongi1.png",function(){selectChar(1)});
+
+	//because the characters aren't of normal button size
+	Char1.x2 = Char1.x1 + 160;
+	Char1.y2 = Char1.y1 + 200;
+	Char2.x2 = Char2.x1 + 160;
+	Char2.y2 = Char2.y1 + 200;
+
+
+	buttons2.push(Char1,Char2);
+
+	this.draw = function(){
+		buttons2.forEach(function(entry){
+			entry.draw();
+		});
+	};
+
+	this.touchFunc = function(e){
+
+		var touch = e.touches[0];
+		buttons2.forEach(function(entry) {
+
+			entry.isHit(touch.pageX, touch.pageY);
+		}, false);
+	}
+
+};
+
+function charselection(){
+	SOUND.audio2.pause();
+	var charMenu = new Chars();
+	currentScreen = charMenu;
+	NJ.Draw.clear();
+	currentScreen.draw();
+
+}
+
+
+//Onload XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 window.onload = function(){
 	
 	document.ontouchmove = function(e){ 
@@ -552,7 +624,7 @@ window.onkeyup = function(e) {
    var key = e.keyCode ? e.keyCode : e.which;
 
    if (key == 38) {
-		start();
+		charselection();
 	}
 }
 
