@@ -630,9 +630,15 @@ function gameover(){
 		img.onload = function () {
 			return;
 		}
+		var img2 = new Image();
+		img2.src = "./pictures/gameover.png";
+		img2.onload = function () {
+			return;
+		}
 
 		var draw = function () {
 			NJ.ctx.drawImage(img, 40, 700);
+			NJ.ctx.drawImage(img2, 0, 200);
 		}
 
 		var x = 250;
