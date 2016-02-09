@@ -206,31 +206,7 @@ function updateSponge(){
 
 	SpongeUpNr - berechnet die Schnelligkeit
 	*/
-	/*
-	var jumpHeight = 15;
-	var temp = spongeUpNr/340;
 	
-	//Y height - höhe
-	if(temp<0.1) //temp soll nicht zu klein werden
-		temp=0.1;
-	temp=temp*2*jumpHeight;
-	if(spongeUpBool){
-		spongeY = spongeY + temp; //neue Höhe berechnen
-		if(!(spongeUpNr > 340)){ //Ess soll nicht zu schnell nach unten gesprungen werden (spongeUpNr berechnet die Sprunghöhe)
-			spongeUpNr = spongeUpNr + temp;
-		}
-	}else{
-		
-		updatePlatforms(2*temp*boost); //wenn nach oben gesprungen wird, werden die Plattformen mit nach oben gezogen
-		spongeY = spongeY - temp; //neue Höhe berechnen
-		spongeUpNr = spongeUpNr - temp; //SpongeUpNr berechnet die Schnelligkeit
-		punktzahl = punktzahl + temp; //Punktzahl
-		if(spongeUpNr < 0 || spongeY<300){ //Wenn hoch genug gesprungen wird, geht es wieder nach unten
-			spongeUpBool = true;
-			spongeUpNr = 0;
-		}
-	}
-	*/
     /* 
     Uberprüft ob der Spieler getroffen wurde, wenn dies der Fall ist fällt der Spieler nur noch nach unten, 
     ist dies nicht der Fall so wird ganz normal weiter gesprungen 
