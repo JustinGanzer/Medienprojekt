@@ -298,12 +298,12 @@ function generatePlatforms(){
 			platformType = 1;
 		var new_platform = new Platform(x, y, platformType);
 		NJ.entities.push(new_platform);
-        generateEnemy(x, y);
+//        generateEnemy(x, y);
 	}
 }
 
 function generateEnemy(x, y){
-		var random = Math.floor((Math.random() * 100) + 1); //10%wahrscheinlichkeit für schnellere plattformen
+		var random = Math.floor((Math.random() * 100) + 1); 
 		if(random > 90)
 			var enemy = new Enemy(x, y, 1);
 		else if (random > 80)
@@ -341,7 +341,7 @@ function Enemy(x, y, enemyType){
 	}
     
     this.draw = function(){
-		NJ.ctx.drawImage(this.img,this.x,this.y);
+		NJ.ctx.drawImage(this.img,this.x,this.y - img.y);
 	}
 
 	this.check = function(){
@@ -352,11 +352,32 @@ function Enemy(x, y, enemyType){
 	}
 	var counter = 0;
 	this.isHit = function(){
-        if(counter == 100){
-            isHitted = true;    
-            console.log(isHitted);
-
+        console.log(this.y);
+        console.log(this.x);
+        switch(enemyType){
+		case 1:
+		if((spongeX >= this.x && spongeX <= this.x + 100)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + 100)){
+            if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y + 100){
+                console.log(isHitted);
+                isHitted = true;
+            }
         }
+		break;
+        
+//		case 2:
+//		if(){
+//            isHitted = true;
+//        }
+//		break;
+//                
+//        case 3:
+//		if(){
+//            isHitted = true;
+//        }
+//		break;
+
+	   }
+        
     }
 }
 
@@ -442,8 +463,10 @@ function start(){
 	var tempPlatform = new Platform(150, 750,1);
 	var tempPlatform2 = new Platform(300, 750,1);
 	var tempPlatform3 = new Platform(225, 450,1);
+    
+    var enemy = new Enemy(200, 400, 1)
    
-	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3);
+	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3, enemy);
 
 	currentScreen=gamescreen;
 
@@ -643,7 +666,7 @@ window.onkeyup = function(e) {
    var key = e.keyCode ? e.keyCode : e.which;
 
    if (key == 38) {
-		charselection();
+		start();
 	}
 }
 
