@@ -315,31 +315,10 @@ Player.IMAGE.onload = function(){
 /* Hier werden die Gegner Objekte definiert, es gibt 3 Arten von Gegnern */
 function Enemy(x, y, enemyType){
     this.img = new Image();
-    
-    switch(enemyType){
-		case 1:
-		this.x = x + 40;
-        this.y = y - 70;    
-		break;
-        
-		case 2:
-		this.x = x - 25;
-        this.y = y - 25;    
-		break;
-                
-        case 3:
-        this.x = x;
-        this.y = y;    
-		break;
-    }
-    
     this.img.x = x;
 	this.img.y = y;
+    this.xOffset = 75;
     this.img.src = "./pictures/Enemy" + enemyType + ".png";
-    
-    var x_temp = x;
-    var y_temp = y;
-    
     
     var img = this.img;
 	this.img.onload = function(){
@@ -357,7 +336,7 @@ function Enemy(x, y, enemyType){
 		}
 	}
 	this.isHit = function(){
-		if((spongeX >= this.x && spongeX <= this.x + this.img.x)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.img.x)){
+		if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
             if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y + 100){
                 console.log(isHitted);
                 isHitted = true;
