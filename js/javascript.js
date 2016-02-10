@@ -36,6 +36,7 @@ var NJ = {
 		// the canvas context enables us to 
 		// interact with the canvas api
 		NJ.ctx = NJ.canvas.getContext('2d');
+		NJ.ctx.font="30px Arial";
 		
 
 		// we're ready to resize
@@ -77,6 +78,7 @@ var NJ = {
 		});
 		
 	   NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
+	   NJ.ctx.fillText(parseInt(punktzahl) + " Punkte",10,30);
 	},
 
 	// the actual loop
@@ -506,6 +508,7 @@ var MenuButton = function(x,y,src,func){
 
 var Gamescreen = function(){
 
+
 	this.touchFunc = function(e){
 		var touch = e.touches[0];
 		alert("Shooting not implemented yet!");
@@ -629,6 +632,7 @@ function gameover(){
 		img.src = "./pictures/topf.png";
 		img.onload = function () {
 			return;
+			alert("topf loaded");
 		}
 		var img2 = new Image();
 		img2.src = "./pictures/gameover.png";
