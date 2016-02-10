@@ -315,6 +315,8 @@ Player.IMAGE.onload = function(){
 /* Hier werden die Gegner Objekte definiert, es gibt 3 Arten von Gegnern */
 function Enemy(x, y, enemyType){
     this.img = new Image();
+    this.x = x; 
+    this.y = y;
     this.img.x = x;
 	this.img.y = y;
     this.xOffset = 75;
@@ -728,7 +730,8 @@ window.onkeyup = function(e) {
    var key = e.keyCode ? e.keyCode : e.which;
 
    if (key == 38) {
-		highscore();
+//		highscore();
+       start();
 	}
 }
 
