@@ -209,7 +209,10 @@ function updateSponge(){
 	SpongeUpNr - berechnet die Schnelligkeit
 	*/
 	
-    //Überprüfung ob der Spieler getroffen wurde
+    /* 
+    Uberprüft ob der Spieler getroffen wurde, wenn dies der Fall ist fällt der Spieler nur noch nach unten, 
+    ist dies nicht der Fall so wird ganz normal weiter gesprungen 
+    */
     if(isHitted){
        spongeUpBool = true;
     } 
@@ -287,7 +290,7 @@ function generateEnemy(x, y){
                 NJ.entities.push(enemy);
                 return true;     
             } else if (random > 90){
-                var enemy = new Enemy(x, y, 2);
+                var enemy = new Enemy(x, y, 1);
                 NJ.entities.push(enemy);
                 return true;
             } 
@@ -312,13 +315,31 @@ Player.IMAGE.onload = function(){
 /* Hier werden die Gegner Objekte definiert, es gibt 3 Arten von Gegnern */
 function Enemy(x, y, enemyType){
     this.img = new Image();
-    this.xOffset =75;
-    this.x = x;
-    this.y = y;    
+    
+    switch(enemyType){
+		case 1:
+		this.x = x + 40;
+        this.y = y - 70;    
+		break;
+        
+		case 2:
+		this.x = x - 25;
+        this.y = y - 25;    
+		break;
+                
+        case 3:
+        this.x = x;
+        this.y = y;    
+		break;
+    }
+    
     this.img.x = x;
 	this.img.y = y;
     this.img.src = "./pictures/Enemy" + enemyType + ".png";
-
+    
+    var x_temp = x;
+    var y_temp = y;
+    
     
     var img = this.img;
 	this.img.onload = function(){
@@ -335,9 +356,9 @@ function Enemy(x, y, enemyType){
 			NJ.entities.splice(index, 1);
 		}
 	}
-	this.isHit = function(){    
-		if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
-            if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55){
+	this.isHit = function(){
+		if((spongeX >= this.x && spongeX <= this.x + this.img.x)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.img.x)){
+            if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y + 100){
                 console.log(isHitted);
                 isHitted = true;
             }
@@ -348,7 +369,7 @@ function Enemy(x, y, enemyType){
 /* Hier werden die Gegner Objekte definiert */
 function Platform(x, y ,platformType){
 	this.img = new Image();
-	this.xOffset = 75;
+	this.xOffset = 100;
 	this.x = x;
 	this.y = y;
 	this.img.x = x;
@@ -364,10 +385,7 @@ function Platform(x, y ,platformType){
 		case 2:
 		this.boost = 4;
 		break;
-            
-        case 3:
-        this.boost = 0;
-        break;
+
 	}
 	
 	
@@ -431,8 +449,9 @@ function start(){
 	var tempPlatform2 = new Platform(300, 750,1);
 	var tempPlatform3 = new Platform(225, 450,1);
     
-    
-	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3);
+    var enemy = new Enemy(300, 750, 2)
+   
+	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3, enemy);
 
 	currentScreen=gamescreen;
 
@@ -510,38 +529,6 @@ var Gamescreen = function(){
 	}
 }
 
-function highscore(){
-	currentScreen=this;
-	var xhttp= new XMLHttpRequest();
-	var button = new MenuButton(0,0,"./pictures/back.png",menu.draw);
-
-	this.touchFunc = function(e){
-
-		var touch = e.touches[0];
-			button.isHit(touch.pageX, touch.pageY);
-		}
-
-	
-	xhttp.onreadystatechange = function(){
-		if(xhttp.readyState==4 && xhttp.status==200){
-			NJ.Draw.clear();
-			button.draw();
-			var text = xhttp.responseText;
-			var x = 100;
-			var y = 150;
-			var lineheight = 30;
-			var lines = text.split("\n");
-			for (var i = 0;i<lines.length;i++){
-				NJ.ctx.fillText(lines[i], x, y + (i*lineheight) );
-			}
-			console.log(xhttp.responseText);
-		}
-	}
-
-	xhttp.open("GET","php/gethighscore.php",true);
-	xhttp.send();
-
-}
 
 
 var Menu = function(){
@@ -669,28 +656,11 @@ function gameover(){
 		img2.onload = function () {
 			return;
 		}
-//        var klein_tropfen = new Image();
-//		img2.src = "./pictures/Tropfen1.png";
-//		img2.onload = function () {
-//			return;
-//		}
-//        var groß_tropfen = new Image();
-//		img2.src = "./pictures/Tropfen2.png";
-//		img2.onload = function () {
-//			return;
-//		}
 
-        
 		var draw = function () {
 			NJ.ctx.drawImage(img, 40, 700);
 			NJ.ctx.drawImage(img2, 0, 200);
 		}
-        var wateranim = function(x, y) {
-            NJ.ctx.drawImage(klein_tropfen, x, y);
-            NJ.ctx.drawImage(klein_tropfen, x, y);
-            NJ.ctx.drawImage(groß_tropfen, x, y);
-            NJ.ctx.drawImage(groß_tropfen, x, y);
-        }
 
 		var x = 250;
 		var y = 50;
@@ -709,20 +679,45 @@ function gameover(){
 				}
 				
 			} else {
-
-//                for(var i = 0; i <= 800; i++){
-//                    wateranim(x , y - i);
-//                    console.log(i);
-//                    NJ.Draw.clear();
-//                }
-                stop();
-            }
-
+				stop();
+			}
+		}
 		this.loop();
 	}
 }
 
+function highscore(){
+	currentScreen=this;
+	var xhttp= new XMLHttpRequest();
+	var button = new MenuButton(0,0,"./pictures/back.png",menu.draw);
 
+	this.touchFunc = function(e){
+
+		var touch = e.touches[0];
+			button.isHit(touch.pageX, touch.pageY);
+		}
+
+	
+	xhttp.onreadystatechange = function(){
+		if(xhttp.readyState==4 && xhttp.status==200){
+			NJ.Draw.clear();
+			button.draw();
+			var text = xhttp.responseText;
+			var x = 100;
+			var y = 150;
+			var lineheight = 30;
+			var lines = text.split("\n");
+			for (var i = 0;i<lines.length;i++){
+				NJ.ctx.fillText(lines[i], x, y + (i*lineheight) );
+			}
+			console.log(xhttp.responseText);
+		}
+	}
+
+	xhttp.open("GET","php/gethighscore.php",true);
+	xhttp.send();
+
+}
 
 //Onload XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 window.onload = function(){
@@ -759,4 +754,3 @@ window.onkeyup = function(e) {
 }
 
 
-}
