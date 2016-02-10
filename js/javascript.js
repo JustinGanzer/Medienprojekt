@@ -36,6 +36,7 @@ var NJ = {
 		// the canvas context enables us to 
 		// interact with the canvas api
 		NJ.ctx = NJ.canvas.getContext('2d');
+		NJ.ctx.font="30px Arial";
 		
 
 		// we're ready to resize
@@ -77,6 +78,7 @@ var NJ = {
 		});
 		
 	   NJ.ctx.drawImage(Player.IMAGE,spongeX,spongeY, Player.HEIGHT, Player.WIDTH);
+	   NJ.ctx.fillText(parseInt(punktzahl) + " Punkte",10,30);
 	},
 
 	// the actual loop
@@ -491,6 +493,7 @@ var MenuButton = function(x,y,src,func){
 
 var Gamescreen = function(){
 
+
 	this.touchFunc = function(e){
 		var touch = e.touches[0];
 		alert("Shooting not implemented yet!");
@@ -522,10 +525,6 @@ var Menu = function(){
 	this.touchFunc = function(e){
 		
 		var touch = e.touches[0];
-		var randomizer = Math.floor((Math.random() * 5));
-		end = new Audio('./sounds/end' + randomizer + '.wav');
-		end.play();
-		end.pauseAudio();
 		buttons.forEach(function(entry) {
 			
 			entry.isHit(touch.pageX, touch.pageY);
@@ -618,25 +617,26 @@ function gameover(){
 		img.src = "./pictures/topf.png";
 		img.onload = function () {
 			return;
+			alert("topf loaded");
+		}
+		var img2 = new Image();
+		img2.src = "./pictures/gameover.png";
+		img2.onload = function () {
+			return;
 		}
 
 		var draw = function () {
 			NJ.ctx.drawImage(img, 40, 700);
+			NJ.ctx.drawImage(img2, 0, 200);
 		}
 
 		var x = 250;
 		var y = 50;
 		draw();
 		NJ.ctx.drawImage(Player.IMAGE, x, y, Player.HEIGHT, Player.WIDTH);
-
-		var randomizer = Math.floor((Math.random() * 5));
-		end = new Audio('./sounds/end' + randomizer + '.wav');
-
-
-		end.play();
 		this.loop = function () {
 			if (y < 800) {
-				y = y + 10;
+				y = y + 20;
 				NJ.Draw.clear();
 				draw();
 				NJ.ctx.drawImage(Player.IMAGE, x, y, Player.HEIGHT, Player.WIDTH);
@@ -649,12 +649,10 @@ function gameover(){
 	}
 }
 
-var end;
-
 //Onload XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 window.onload = function(){
 	
-	document.ontouchmove = function(e){ 
+	document.ontouchmove = function(e){
 		e.preventDefault(); 
 	}
 	
