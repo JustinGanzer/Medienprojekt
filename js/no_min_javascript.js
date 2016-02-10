@@ -209,10 +209,7 @@ function updateSponge(){
 	SpongeUpNr - berechnet die Schnelligkeit
 	*/
 	
-    /* 
-    Uberprüft ob der Spieler getroffen wurde, wenn dies der Fall ist fällt der Spieler nur noch nach unten, 
-    ist dies nicht der Fall so wird ganz normal weiter gesprungen 
-    */
+    //Überprüfung ob der Spieler getroffen wurde
     if(isHitted){
        spongeUpBool = true;
     } 
@@ -290,7 +287,7 @@ function generateEnemy(x, y){
                 NJ.entities.push(enemy);
                 return true;     
             } else if (random > 90){
-                var enemy = new Enemy(x, y, 1);
+                var enemy = new Enemy(x, y, 2);
                 NJ.entities.push(enemy);
                 return true;
             } 
@@ -338,12 +335,9 @@ function Enemy(x, y, enemyType){
 			NJ.entities.splice(index, 1);
 		}
 	}
-	this.isHit = function(){
-        if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
-			if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55){
-        
-//		if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
-//            if(spongeY + 50 >= this.y && spongeY - 50 <= this.y + this.img.y){
+	this.isHit = function(){    
+		if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
+            if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y+55){
                 console.log(isHitted);
                 isHitted = true;
             }
@@ -354,7 +348,7 @@ function Enemy(x, y, enemyType){
 /* Hier werden die Gegner Objekte definiert */
 function Platform(x, y ,platformType){
 	this.img = new Image();
-	this.xOffset = 100;
+	this.xOffset = 75;
 	this.x = x;
 	this.y = y;
 	this.img.x = x;
@@ -370,7 +364,10 @@ function Platform(x, y ,platformType){
 		case 2:
 		this.boost = 4;
 		break;
-
+            
+        case 3:
+        this.boost = 0;
+        break;
 	}
 	
 	
@@ -434,9 +431,8 @@ function start(){
 	var tempPlatform2 = new Platform(300, 750,1);
 	var tempPlatform3 = new Platform(225, 450,1);
     
-    var enemy = new Enemy(300, 750, 2)
-   
-	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3, enemy);
+    
+	NJ.entities.push(tempPlatform, tempPlatform2, tempPlatform3);
 
 	currentScreen=gamescreen;
 
@@ -624,11 +620,28 @@ function gameover(){
 		img2.onload = function () {
 			return;
 		}
+//        var klein_tropfen = new Image();
+//		img2.src = "./pictures/Tropfen1.png";
+//		img2.onload = function () {
+//			return;
+//		}
+//        var groß_tropfen = new Image();
+//		img2.src = "./pictures/Tropfen2.png";
+//		img2.onload = function () {
+//			return;
+//		}
 
+        
 		var draw = function () {
 			NJ.ctx.drawImage(img, 40, 700);
 			NJ.ctx.drawImage(img2, 0, 200);
 		}
+        var wateranim = function(x, y) {
+            NJ.ctx.drawImage(klein_tropfen, x, y);
+            NJ.ctx.drawImage(klein_tropfen, x, y);
+            NJ.ctx.drawImage(groß_tropfen, x, y);
+            NJ.ctx.drawImage(groß_tropfen, x, y);
+        }
 
 		var x = 250;
 		var y = 50;
@@ -642,8 +655,14 @@ function gameover(){
 				NJ.ctx.drawImage(Player.IMAGE, x, y, Player.HEIGHT, Player.WIDTH);
 				requestAnimFrame(this.loop);
 			} else {
-				stop()
-			}
+                
+//                for(var i = 0; i <= 800; i++){
+//                    wateranim(x , y - i);
+//                    console.log(i);
+//                    NJ.Draw.clear();
+//                }
+                stop();
+            }
 		}
 		requestAnimFrame(this.loop);
 	}
