@@ -462,12 +462,26 @@ function stop(){
 
 		punktzahl = parseInt(punktzahl);
 		alert("Verloren! Punktzahl: " + punktzahl);
+		var playerName_temp = prompt("In die Highscore-Liste eintragen.",playerName);
+		if (playerName_temp){
+			playerName = playerName_temp;
+			var xhttp= new XMLHttpRequest();
+			xhttp.open("post","php/sethighscore.php",true);
+			xhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+			xhttp.send("name="+ playerName + "&punkte=" + punktzahl);
+		}
+
+		
+
 		NJ.entities = [];
 		NJ.render();
 		isPaused = true;
 		currentScreen = menu;
 		SOUND.audio2.pause();
 		menu.draw();
+
+
+		
 
 }
 
@@ -519,6 +533,7 @@ var Gamescreen = function(){
 
 var Menu = function(){
 	currentScreen = this;
+	playerName = "";
 	gamescreen = new Gamescreen();
 	var buttons = [];
 	var placeholder = function(){
@@ -526,12 +541,14 @@ var Menu = function(){
 		return true;
 	};
 	var startButton = new MenuButton(220,100,"./pictures/start.png",start);
-	var highscoreButton = new MenuButton(220,250,"./pictures/highscore.png",placeholder);
+	var highscoreButton = new MenuButton(220,250,"./pictures/highscore.png",highscore);
 	var charakterButton = new MenuButton(220,400,"./pictures/charakter.png",charselection);
 	var fullscreenButton = new MenuButton(220,800,"./pictures/fullscreen.png",toggleFullScreen);
 	buttons.push(startButton,highscoreButton,charakterButton,fullscreenButton);
 	
 	this.draw = function(){
+		currentScreen = menu;
+		NJ.Draw.clear();
 		buttons.forEach(function(entry){
 			entry.draw();
 		});
@@ -595,6 +612,7 @@ var Chars = function(){
 	buttons2.push(Char1,Char2);
 
 	this.draw = function(){
+		NJ.Draw.clear();
 		buttons2.forEach(function(entry){
 			entry.draw();
 		});
@@ -632,7 +650,6 @@ function gameover(){
 		img.src = "./pictures/topf.png";
 		img.onload = function () {
 			return;
-			alert("topf loaded");
 		}
 		var img2 = new Image();
 		img2.src = "./pictures/gameover.png";
@@ -655,13 +672,51 @@ function gameover(){
 				NJ.Draw.clear();
 				draw();
 				NJ.ctx.drawImage(Player.IMAGE, x, y, Player.HEIGHT, Player.WIDTH);
-				requestAnimFrame(this.loop);
+				if( /iPhone/i.test(navigator.userAgent)){
+					setTimeout(this.loop, 25);
+				}else{
+					requestAnimFrame(this.loop);
+				}
+				
 			} else {
-				stop()
+				stop();
 			}
 		}
-		requestAnimFrame(this.loop);
+		this.loop();
 	}
+}
+
+function highscore(){
+	currentScreen=this;
+	var xhttp= new XMLHttpRequest();
+	var button = new MenuButton(0,0,"./pictures/back.png",menu.draw);
+
+	this.touchFunc = function(e){
+
+		var touch = e.touches[0];
+			button.isHit(touch.pageX, touch.pageY);
+		}
+
+	
+	xhttp.onreadystatechange = function(){
+		if(xhttp.readyState==4 && xhttp.status==200){
+			NJ.Draw.clear();
+			button.draw();
+			var text = xhttp.responseText;
+			var x = 100;
+			var y = 150;
+			var lineheight = 30;
+			var lines = text.split("\n");
+			for (var i = 0;i<lines.length;i++){
+				NJ.ctx.fillText(lines[i], x, y + (i*lineheight) );
+			}
+			console.log(xhttp.responseText);
+		}
+	}
+
+	xhttp.open("GET","php/gethighscore.php",true);
+	xhttp.send();
+
 }
 
 //Onload XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -694,7 +749,7 @@ window.onkeyup = function(e) {
    var key = e.keyCode ? e.keyCode : e.which;
 
    if (key == 38) {
-		start();
+		highscore();
 	}
 }
 
