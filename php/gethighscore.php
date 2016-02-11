@@ -1,12 +1,13 @@
 <?php
-	mysql_connect("localhost","highscore","");
+	mysql_connect("localhost","root","");
 	mysql_select_db("highscore");
+	mysql_query("SET CHARACTER SET utf8");
 	
-	$result = mysql_query("SELECT * FROM highscore ORDER BY punkte DESC");
+	$result = mysql_query("SELECT * FROM highscore ORDER BY points DESC");
 	$platz = 1;
-	echo "Platz   Name   Punkte\n";
+	echo "Platz&%!Name&%!Punkte\n";
 	while($row = mysql_fetch_array($result)){
-		echo "  " . $platz . "  " . $row["name"] . $row["punkte"] . "\n";
+		echo $platz . "&%!" . $row["name"] ."&%!" . $row["points"] . "\n";
 		$platz++;
 	}
 

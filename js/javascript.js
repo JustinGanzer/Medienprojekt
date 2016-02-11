@@ -337,6 +337,7 @@ function Enemy(x, y, enemyType){
 			NJ.entities.splice(index, 1);
 		}
 	}
+
 	this.isHit = function(){
 		if((spongeX >= this.x && spongeX <= this.x + this.xOffset)||(spongeX + Player.WIDTH >= this.x && spongeX + Player.WIDTH <= this.x + this.xOffset)){
             if(spongeY + Player.HEIGHT >= this.y && spongeY + Player.HEIGHT <= this.y + 100){
@@ -449,7 +450,7 @@ function stop(){
 			var xhttp= new XMLHttpRequest();
 			xhttp.open("post","php/sethighscore.php",true);
 			xhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-			xhttp.send("name="+ playerName + "&punkte=" + punktzahl);
+			xhttp.send("name="+ playerName + "&points=" + punktzahl);
 		}
 
 		
@@ -689,7 +690,15 @@ function highscore(){
 			var lineheight = 30;
 			var lines = text.split("\n");
 			for (var i = 0;i<lines.length;i++){
-				NJ.ctx.fillText(lines[i], x, y + (i*lineheight) );
+				//NJ.ctx.fillText(lines[i], x, y + (i*lineheight) );
+				
+				var columns = lines[i].split("&%!");
+				console.log(columns.length);
+				
+				for(var j=0;j<columns.length;j++){
+					NJ.ctx.fillText(columns[j],x+(j*150),y + (i*lineheight))
+				}
+				
 			}
 			console.log(xhttp.responseText);
 		}
@@ -730,8 +739,8 @@ window.onkeyup = function(e) {
    var key = e.keyCode ? e.keyCode : e.which;
 
    if (key == 38) {
-//		highscore();
-       start();
+		highscore();
+//       start();
 	}
 }
 
